@@ -1,0 +1,26 @@
+# track the scripts in the directory of NGC 5258 (should be similar to NGC 5257)
+cd NGC 5258
+find . -maxdepth 2 -name '*script*' -exec git add "{}" \;
+git rm -r --cached */script/*.last
+git rm -r --cached */script/casa/*.last 
+git rm -r --cached */script/casa/*.log
+git rm -r --cached */script/casa/*.py~
+git rm -r --cached */script/python/*.py~
+git rm -r --cached */script/*.py~
+git rm -r --cached */script/*.log
+git rm -r --chached */script/casa/*.log
+git rm -r --cached */script/python/__pycache__/*
+git rm -r --cached */script/*.py#
+
+git rm -r --cached ratio/script/python/measure_flux/.ipynb_checkpoints/*
+git rm -r --cached */script/python/measure_flux/*.py~
+git rm -r --cached */script/radex_run/*.py~
+git rm -r --cached */ratio/script/python/measure_flux_SFR/.ipynb_checkpoints/*
+git rm -r --cached ratio/script/python/measure_flux_SFR/*.py~
+git rm -r --cached ratio/script/python/measure_flux_SFR/*.py#
+git rm -r --cached ratio/script/casa/makemask/makemask_mod.py
+git rm -r --cached continuum/script/NGC_5257.psf/*
+git rm -r --cached 12CO10/script/__pycache__/cube.cpython-36.pyc
+git rm -r --cached ratio/script/python/.ipynb_checkpoints/*
+git rm -r --cached ratio/script/casa/makemask/*.py~
+git rm -r --cached SM/script/*Python*
