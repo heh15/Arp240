@@ -1,0 +1,9 @@
+from script NGC5257_measure_mod_error.txt 
+
+Image from no cut image 
+        12CO10 flux 12CO10 uncertainty 13CO10 flux 13CO10 uncertainty    ratio uncertainty
+spiral        15.25           0.270822     1.09733          0.0637567  13.8974      1.2956
+anomaly     4.27781           0.162009    0.165084          0.0285322  25.9129     4.93749
+total       68.6989           0.767119      5.2291           0.143788  13.1378     1.00749
+center      12.8549           0.139207     0.91437            0.05066  14.0587     1.27205
+south       0.42881           0.107373   0.0507839          0.0154054  8.44381     3.37459

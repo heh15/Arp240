@@ -1,0 +1,10 @@
+############################################################
+# casa
+countchannel.py (countchannel_2110.py):
+Count the number of channels used in making moment 0 map.
+1) The threshold is 2*rms
+
+makemask_mod.py (makemask.py):
+Make the mask of different regions of the galaxy based on the
+morphology. 
+

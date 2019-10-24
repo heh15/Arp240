@@ -1,0 +1,9 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+x=range(5)
+y=range(5)
+
+fig=plt.figure()
+ax1=fig.subplot(111)
+ax1.plot(x,y)

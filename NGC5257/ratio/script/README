@@ -1,0 +1,45 @@
+############################################################
+# casa
+countchannel.py (countchannel_2110.py):
+Count the number of channels used in making moment 0 map.
+1) The threshold is 2*rms
+
+makemask_mod.py (makemask.py):
+Make the mask of different regions of the galaxy based on the
+morphology. 
+
+ratio_1213.py:
+Make the ratio map of 12CO/13CO. 
+
+ratio_2110_5rms.py (ratio_2110_mask.py):
+Make the ratio map of 12CO2-1/1-0 based on rms threshold or the mask
+drawn by hand. 
+
+anomaly_kin.py:
+Make the mask of the region with anomaly velocity. 
+
+############################################################
+# python
+
+opDepth.py: 
+Calculate the optcial depth of 12CO and 13CO based on the
+Jimenez_Donaire. 2017. 
+
+color_ratio.py:
+Try different colors for the poster ratio map. 
+
+measure_1213/
+NGC5257_measure_mod_error.py
+(NGC5257_measure_mod.py,NGC5257_measure_mod_1213.py):
+Measure the ratio of the 12CO/13CO in different regions.
+
+measure_2110/
+NGC5257_measure_2110_mod_error.py:
+(NGC5257_measure_2110.py)
+Measure the ratio of the 12CO2-1/1-0 in different regions. 
+
+############################################################
+# Others
+
+move.sh:
+Move the image to the working directory. 
