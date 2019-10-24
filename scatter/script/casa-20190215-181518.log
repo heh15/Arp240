@@ -1,0 +1,286 @@
+
+2019-02-15 18:15:20	INFO	::casa	
+2019-02-15 18:15:20	INFO	::casa	CASA Version 5.4.0-68  
+2019-02-15 18:16:31	INFO	impbcor::::	
+2019-02-15 18:16:31	INFO	impbcor::::+	##########################################
+2019-02-15 18:16:31	INFO	impbcor::::+	##### Begin Task: impbcor            #####
+2019-02-15 18:16:31	INFO	impbcor::::	impbcor(imagename="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40.image.mom0/",pbimage="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40.pb/",outfile="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40.pbcor.mom0/",overwrite=False,box="",
+2019-02-15 18:16:31	INFO	impbcor::::+	        region="",chans="",stokes="",mask="",mode="divide",
+2019-02-15 18:16:31	INFO	impbcor::::+	        cutoff=-1.0,stretch=False)
+2019-02-15 18:16:31	SEVERE	impbcor::image::pbcor (file ../../tools/images/image_cmpt.cc, line 4127)	Exception Reported: Input image and primary beam image have different shapes. Cannot do primary beam correction. at File: ../../imageanalysis/ImageAnalysis/ImagePrimaryBeamCorrector.cc, line: 175
+2019-02-15 18:16:31	SEVERE	impbcor::::	*** Error ***Input image and primary beam image have different shapes. Cannot do primary beam correction. at File: ../../imageanalysis/ImageAnalysis/ImagePrimaryBeamCorrector.cc, line: 175
+2019-02-15 18:16:31	SEVERE	impbcor::::	An error occurred running task impbcor.
+2019-02-15 18:18:01	INFO	viewer::::	
+2019-02-15 18:18:01	INFO	viewer::::+	##########################################
+2019-02-15 18:18:01	INFO	viewer::::+	##### Begin Task: viewer             #####
+2019-02-15 18:18:01	INFO	viewer::::	viewer(infile="../image/NGC5257_12CO21_combine_noise40.pb/",displaytype="raster",channel=0,zoom=1,outfile="",
+2019-02-15 18:18:01	INFO	viewer::::+	        outscale=1.0,outdpi=300,outformat="jpg",outlandscape=False,gui=True)
+2019-02-15 18:18:02	INFO	viewer::::	##### End Task: viewer               #####
+2019-02-15 18:18:02	INFO	viewer::::+	##########################################
+2019-02-15 18:25:28	INFO	imcollapse::::	
+2019-02-15 18:25:28	INFO	imcollapse::::+	##########################################
+2019-02-15 18:25:28	INFO	imcollapse::::+	##### Begin Task: imcollapse         #####
+2019-02-15 18:25:28	INFO	imcollapse::::	imcollapse(imagename="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40.pb/",function="mean",axes=2,outfile="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_mom0.pb",box="",
+2019-02-15 18:25:28	INFO	imcollapse::::+	        region="",chans="",stokes="",mask="",overwrite=False,
+2019-02-15 18:25:28	INFO	imcollapse::::+	        stretch=False)
+2019-02-15 18:25:28	INFO	imcollapse::ImageRegion::fromRecord	Selected bounding box : 
+2019-02-15 18:25:28	INFO	imcollapse::ImageRegion::fromRecord+	    [0, 0, 0, 0] to [959, 959, 0, 69]  (13:39:56.122, +00.49.36.100, I, 2.25686e+11Hz to 13:39:49.728, +00.51.12.000, I, 2.25167e+11Hz)
+2019-02-15 18:25:28	INFO	imcollapse::ImageCollapser::_doDegenerateAxesCase	All subimage axes to be collapsed are degenerate, using algorithm optimized for that case.
+2019-02-15 18:25:29	INFO	imcollapse::CasacRegionManager::fromBCS	No directional region specified. Using full positional plane.
+2019-02-15 18:25:29	INFO	imcollapse::CasacRegionManager::fromBCS	Using all spectral channels.
+2019-02-15 18:25:29	INFO	imcollapse::CasacRegionManager::fromBCS	Using polarizations ALL
+2019-02-15 18:25:30	INFO	imcollapse::SubImageFactory::createImage	Creating image '/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_mom0.pb' of shape [960, 960, 1, 70]
+2019-02-15 18:25:30	INFO	imcollapse::ImageMaskAttacher::makeMask	Created mask `mask0'
+2019-02-15 18:25:31	INFO	imcollapse::::	##### End Task: imcollapse           #####
+2019-02-15 18:25:31	INFO	imcollapse::::+	##########################################
+2019-02-15 18:25:31	INFO	impbcor::::	
+2019-02-15 18:25:31	INFO	impbcor::::+	##########################################
+2019-02-15 18:25:31	INFO	impbcor::::+	##### Begin Task: impbcor            #####
+2019-02-15 18:25:31	INFO	impbcor::::	impbcor(imagename="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40.image.mom0/",pbimage="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40_mom0.pb/",outfile="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40.pbcor.mom0/",overwrite=False,box="",
+2019-02-15 18:25:31	INFO	impbcor::::+	        region="",chans="",stokes="",mask="",mode="divide",
+2019-02-15 18:25:31	INFO	impbcor::::+	        cutoff=-1.0,stretch=False)
+2019-02-15 18:25:31	SEVERE	impbcor::image::pbcor (file ../../tools/images/image_cmpt.cc, line 4127)	Exception Reported: Exception: File '/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40_mom0.pb/' does not exist.
+2019-02-15 18:25:31	SEVERE	impbcor::image::pbcor (file ../../tools/images/image_cmpt.cc, line 4127)+	... thrown by static void casacore::ImageUtilities::openImage(casacore::ImageInterface<T>*&, const casacore::String&) [with T = float] at File: ../../../linux/include/casacore/images/Images/ImageUtilities2.tcc, line: 265
+2019-02-15 18:25:31	SEVERE	impbcor::::	*** Error ***Exception: File '/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40_mom0.pb/' does not exist.
+2019-02-15 18:25:31	SEVERE	impbcor::::+	... thrown by static void casacore::ImageUtilities::openImage(casacore::ImageInterface<T>*&, const casacore::String&) [with T = float] at File: ../../../linux/include/casacore/images/Images/ImageUtilities2.tcc, line: 265
+2019-02-15 18:25:31	SEVERE	impbcor::::	An error occurred running task impbcor.
+2019-02-15 18:26:01	INFO	impbcor::::	
+2019-02-15 18:26:01	INFO	impbcor::::+	##########################################
+2019-02-15 18:26:01	INFO	impbcor::::+	##### Begin Task: impbcor            #####
+2019-02-15 18:26:01	INFO	impbcor::::	impbcor(imagename="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40.image.mom0/",pbimage="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_mom0.pb/",outfile="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40.pbcor.mom0/",overwrite=False,box="",
+2019-02-15 18:26:01	INFO	impbcor::::+	        region="",chans="",stokes="",mask="",mode="divide",
+2019-02-15 18:26:01	INFO	impbcor::::+	        cutoff=-1.0,stretch=False)
+2019-02-15 18:26:01	SEVERE	impbcor::image::pbcor (file ../../tools/images/image_cmpt.cc, line 4127)	Exception Reported: Input image and primary beam image have different shapes. Cannot do primary beam correction. at File: ../../imageanalysis/ImageAnalysis/ImagePrimaryBeamCorrector.cc, line: 175
+2019-02-15 18:26:01	SEVERE	impbcor::::	*** Error ***Input image and primary beam image have different shapes. Cannot do primary beam correction. at File: ../../imageanalysis/ImageAnalysis/ImagePrimaryBeamCorrector.cc, line: 175
+2019-02-15 18:26:01	SEVERE	impbcor::::	An error occurred running task impbcor.
+2019-02-15 18:49:27	INFO	imhead::utils::verify	Verifying arguments....File existence checking failed for imagename NGC5257_12CO21_combine_mom0.pb/
+2019-02-15 18:49:27	WARN	imhead::utils::verify	Argument imagename failed to verify.
+2019-02-15 18:49:27	SEVERE	imhead::::	An error occurred running task imhead.
+2019-02-15 18:49:35	INFO	imhead::::	
+2019-02-15 18:49:35	INFO	imhead::::+	##########################################
+2019-02-15 18:49:35	INFO	imhead::::+	##### Begin Task: imhead             #####
+2019-02-15 18:49:35	INFO	imhead::::	imhead(imagename="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_mom0.pb/",mode="summary",hdkey="",hdvalue="",verbose=False)
+2019-02-15 18:49:35	INFO	ImageMetaData::summary	
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	Image name       : NGC5257_12CO21_combine_mom0.pb
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	Object name      : NGC_5257
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	Image type       : PagedImage
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	Image quantity   : Intensity
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	Pixel mask(s)    : mask0
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	Region(s)        : None
+2019-02-15 18:49:35	INFO	ImageMetaData::summary	
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	Direction reference : J2000
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	Spectral  reference : BARY
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	Velocity  type      : RADIO
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	Rest frequency      : 2.2546e+11 Hz
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	Pointing center     :  13:39:52.922000  +00.50.24.100000
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	Telescope           : ALMA
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	Observer            : kazsliwa
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	Date observation    : 2015/11/16/11:25:33
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	Telescope position: [2.22514e+06m, -5.44031e+06m, -2.48103e+06m] (ITRF)
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	Axis Coord Type      Name             Proj Shape Tile   Coord value at pixel       Coord incr Units
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	--------------------------------------------------------------------------------------------------- 
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	0    0     Direction Right Ascension   SIN   960   80  13:39:52.922   480.00    -1.000000e-01 arcsec
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	1    0     Direction Declination       SIN   960   80 +00.50.24.100   480.00     1.000000e-01 arcsec
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	2    1     Stokes    Stokes                    1    1             I
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	3    2     Spectral  Frequency                70    5   2.25686e+11     0.00 -7.520536090e+06 Hz
+2019-02-15 18:49:35	INFO	ImageMetaData::summary+	                     Velocity                                  -300     0.00     1.000000e+01 km/s
+2019-02-15 18:49:35	INFO	imhead::::	##### End Task: imhead               #####
+2019-02-15 18:49:35	INFO	imhead::::+	##########################################
+2019-02-15 18:50:06	INFO	imhead::::	
+2019-02-15 18:50:06	INFO	imhead::::+	##########################################
+2019-02-15 18:50:06	INFO	imhead::::+	##### Begin Task: imhead             #####
+2019-02-15 18:50:06	INFO	imhead::::	imhead(imagename="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40.image.mom0",mode="summary",hdkey="",hdvalue="",verbose=False)
+2019-02-15 18:50:06	INFO	ImageMetaData::summary	
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	Image name       : NGC5257_12CO21_combine_noise40.image.mom0
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	Object name      : 
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	Image type       : PagedImage
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	Image quantity   : Intensity
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	Pixel mask(s)    : mask0
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	Region(s)        : None
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	Image units      : Jy/beam.km/s
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	Restoring Beam   : 1.01662 arcsec, 0.520611 arcsec, -64.5033 deg
+2019-02-15 18:50:06	INFO	ImageMetaData::summary	
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	Direction reference : J2000
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	Spectral  reference : BARY
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	Velocity  type      : RADIO
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	Rest frequency      : 2.2546e+11 Hz
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	Pointing center     :  13:39:52.922000  +00.50.24.100000
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	Telescope           : ALMA
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	Observer            : kazsliwa
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	Date observation    : 2015/11/16/11:25:33
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	Telescope position: [2.22514e+06m, -5.44031e+06m, -2.48103e+06m] (ITRF)
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	Axis Coord Type      Name             Proj Shape Tile   Coord value at pixel       Coord incr Units
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	--------------------------------------------------------------------------------------------------- 
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	0    0     Direction Right Ascension   SIN   960  192  13:39:52.922   480.00    -1.000000e-01 arcsec
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	1    0     Direction Declination       SIN   960  160 +00.50.24.100   480.00     1.000000e-01 arcsec
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	2    1     Stokes    Stokes                    1    1             I
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	3    2     Spectral  Frequency                 1    1   2.25686e+11   -10.00 -7.520536090e+06 Hz
+2019-02-15 18:50:06	INFO	ImageMetaData::summary+	                     Velocity                                  -300   -10.00     1.000000e+01 km/s
+2019-02-15 18:50:06	INFO	imhead::::	##### End Task: imhead               #####
+2019-02-15 18:50:06	INFO	imhead::::+	##########################################
+2019-02-15 18:51:55	INFO	viewer::::	
+2019-02-15 18:51:55	INFO	viewer::::+	##########################################
+2019-02-15 18:51:55	INFO	viewer::::+	##### Begin Task: viewer             #####
+2019-02-15 18:51:55	INFO	viewer::::	viewer(infile="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_mom0.pb/",displaytype="raster",channel=0,zoom=1,outfile="",
+2019-02-15 18:51:55	INFO	viewer::::+	        outscale=1.0,outdpi=300,outformat="jpg",outlandscape=False,gui=True)
+2019-02-15 18:51:55	INFO	viewer::::	##### End Task: viewer               #####
+2019-02-15 18:51:55	INFO	viewer::::+	##########################################
+2019-02-15 18:53:35	INFO	rmtables::::	
+2019-02-15 18:53:35	INFO	rmtables::::+	##########################################
+2019-02-15 18:53:35	INFO	rmtables::::+	##### Begin Task: rmtables           #####
+2019-02-15 18:53:35	INFO	rmtables::::	rmtables(tablenames="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_mom0.pb")
+2019-02-15 18:53:35	INFO	rmtables::::	Removing /1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_mom0.pb
+2019-02-15 18:53:35	INFO	rmtables::::	##### End Task: rmtables             #####
+2019-02-15 18:53:35	INFO	rmtables::::+	##########################################
+2019-02-15 18:53:55	INFO	imhead::utils::verify	Verifying arguments....File existence checking failed for imagename /1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_mom0.pb/
+2019-02-15 18:53:55	WARN	imhead::utils::verify	Argument imagename failed to verify.
+2019-02-15 18:53:55	SEVERE	imhead::::	An error occurred running task imhead.
+2019-02-15 18:54:09	INFO	imcollapse::::	
+2019-02-15 18:54:09	INFO	imcollapse::::+	##########################################
+2019-02-15 18:54:09	INFO	imcollapse::::+	##### Begin Task: imcollapse         #####
+2019-02-15 18:54:09	INFO	imcollapse::::	imcollapse(imagename="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40.pb/",function="mean",axes=3,outfile="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_mom0.pb",box="",
+2019-02-15 18:54:09	INFO	imcollapse::::+	        region="",chans="",stokes="",mask="",overwrite=False,
+2019-02-15 18:54:09	INFO	imcollapse::::+	        stretch=False)
+2019-02-15 18:54:09	INFO	imcollapse::ImageRegion::fromRecord	Selected bounding box : 
+2019-02-15 18:54:09	INFO	imcollapse::ImageRegion::fromRecord+	    [0, 0, 0, 0] to [959, 959, 0, 69]  (13:39:56.122, +00.49.36.100, I, 2.25686e+11Hz to 13:39:49.728, +00.51.12.000, I, 2.25167e+11Hz)
+2019-02-15 18:54:10	INFO	imcollapse::SubImageFactory::createImage	Creating image '/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_mom0.pb' of shape [960, 960, 1, 1]
+2019-02-15 18:54:11	INFO	imcollapse::ImageMaskAttacher::makeMask	Created mask `mask0'
+2019-02-15 18:54:11	INFO	imcollapse::::	##### End Task: imcollapse           #####
+2019-02-15 18:54:11	INFO	imcollapse::::+	##########################################
+2019-02-15 18:54:20	INFO	impbcor::::	
+2019-02-15 18:54:20	INFO	impbcor::::+	##########################################
+2019-02-15 18:54:20	INFO	impbcor::::+	##### Begin Task: impbcor            #####
+2019-02-15 18:54:20	INFO	impbcor::::	impbcor(imagename="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40.image.mom0/",pbimage="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_mom0.pb/",outfile="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40.pbcor.mom0/",overwrite=False,box="",
+2019-02-15 18:54:20	INFO	impbcor::::+	        region="",chans="",stokes="",mask="",mode="divide",
+2019-02-15 18:54:20	INFO	impbcor::::+	        cutoff=-1.0,stretch=False)
+2019-02-15 18:54:20	INFO	impbcor::SubImageFactory::createImage	Creating image '/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40.pbcor.mom0/' of shape [960, 960, 1, 1]
+2019-02-15 18:54:20	INFO	impbcor::ImageMaskAttacher::makeMask	Created mask `mask0'
+2019-02-15 18:54:21	INFO	impbcor::::	##### End Task: impbcor              #####
+2019-02-15 18:54:21	INFO	impbcor::::+	##########################################
+2019-02-15 18:56:04	INFO	immath::::	
+2019-02-15 18:56:04	INFO	immath::::+	##########################################
+2019-02-15 18:56:04	INFO	immath::::+	##### Begin Task: immath             #####
+2019-02-15 18:56:04	INFO	immath::::	immath(imagename=['/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40.pbcor.mom0/', '/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40.image.mom2/'],mode="evalexpr",outfile="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_height.image",expr="IM1**2/IM0",varnames="",
+2019-02-15 18:56:04	INFO	immath::::+	        sigma="0.0mJy/beam",polithresh="",mask="",region="",box="",
+2019-02-15 18:56:04	INFO	immath::::+	        chans="",stokes="",stretch=False,imagemd="")
+2019-02-15 18:56:04	SEVERE	immath::::	Unable to process expression IM1**2/IM0
+2019-02-15 18:56:04	SEVERE	immath::::	Exception caught was: Image Expression: Parse error at or near '*'
+2019-02-15 18:56:04	SEVERE	immath::::+	Scanned so far: "/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40.image.mom2/"**
+2019-02-15 18:56:04	SEVERE	immath::::	An error occurred running task immath.
+2019-02-15 18:57:34	INFO	immath::::	
+2019-02-15 18:57:34	INFO	immath::::+	##########################################
+2019-02-15 18:57:34	INFO	immath::::+	##### Begin Task: immath             #####
+2019-02-15 18:57:34	INFO	immath::::	immath(imagename=['/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40.pbcor.mom0/', '/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40.image.mom2/'],mode="evalexpr",outfile="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_height.image",expr="IM1*IM1/IM0",varnames="",
+2019-02-15 18:57:34	INFO	immath::::+	        sigma="0.0mJy/beam",polithresh="",mask="",region="",box="",
+2019-02-15 18:57:34	INFO	immath::::+	        chans="",stokes="",stretch=False,imagemd="")
+2019-02-15 18:57:34	WARN	ImageExprCalculator::compute	image units are not the same: 'km/s' vs 'Jy/beam.km/s'. Proceed with caution. Output image metadata will be copied from one of the input images since imagemd was not specified
+2019-02-15 18:57:34	INFO	ImageExprCalculator::_imagecalc	Creating image `/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_height.image' of shape [960, 960, 1, 1]
+2019-02-15 18:57:34	INFO	ImageMaskAttacher::makeMask	Created mask `mask0'
+2019-02-15 18:57:35	INFO	immath::::	##### End Task: immath               #####
+2019-02-15 18:57:35	INFO	immath::::+	##########################################
+2019-02-15 18:58:42	INFO	viewer::::	
+2019-02-15 18:58:42	INFO	viewer::::+	##########################################
+2019-02-15 18:58:42	INFO	viewer::::+	##### Begin Task: viewer             #####
+2019-02-15 18:58:42	INFO	viewer::::	viewer(infile="NGC5257_height.image/",displaytype="raster",channel=0,zoom=1,outfile="",
+2019-02-15 18:58:42	INFO	viewer::::+	        outscale=1.0,outdpi=300,outformat="jpg",outlandscape=False,gui=True)
+2019-02-15 18:58:43	INFO	viewer::::	##### End Task: viewer               #####
+2019-02-15 18:58:43	INFO	viewer::::+	##########################################
+2019-02-15 19:00:36	INFO	::casa	
+2019-02-15 19:00:36	INFO	::casa	CASA Version 5.4.0-68  
+2019-02-15 19:00:43	INFO	viewer::::	
+2019-02-15 19:00:43	INFO	viewer::::+	##########################################
+2019-02-15 19:00:43	INFO	viewer::::+	##### Begin Task: viewer             #####
+2019-02-15 19:00:43	INFO	viewer::::	viewer(infile="",displaytype="raster",channel=0,zoom=1,outfile="",
+2019-02-15 19:00:43	INFO	viewer::::+	        outscale=1.0,outdpi=300,outformat="jpg",outlandscape=False,gui=True)
+2019-02-15 19:00:44	INFO	viewer::::	##### End Task: viewer               #####
+2019-02-15 19:00:44	INFO	viewer::::+	##########################################
+2019-02-15 19:01:44	INFO	viewer::::	
+2019-02-15 19:01:44	INFO	viewer::::+	##########################################
+2019-02-15 19:01:44	INFO	viewer::::+	##### Begin Task: viewer             #####
+2019-02-15 19:01:44	INFO	viewer::::	viewer(infile="NGC5257_height.image/",displaytype="raster",channel=0,zoom=1,outfile="",
+2019-02-15 19:01:44	INFO	viewer::::+	        outscale=1.0,outdpi=300,outformat="jpg",outlandscape=False,gui=True)
+2019-02-15 19:01:44	INFO	viewer::::	##### End Task: viewer               #####
+2019-02-15 19:01:44	INFO	viewer::::+	##########################################
+2019-02-15 19:05:49	INFO	imrebin::::	
+2019-02-15 19:05:49	INFO	imrebin::::+	##########################################
+2019-02-15 19:05:49	INFO	imrebin::::+	##### Begin Task: imrebin            #####
+2019-02-15 19:05:49	INFO	imrebin::::	imrebin(imagename="NGC5257_height.image/",outfile="NGC5257_height_rebin.image",factor=5,region="",box="",
+2019-02-15 19:05:49	INFO	imrebin::::+	        chans="",stokes="",mask="",dropdeg=False,overwrite=False,
+2019-02-15 19:05:49	INFO	imrebin::::+	        stretch=False,crop=True)
+2019-02-15 19:05:49	INFO	imrebin::CasacRegionManager::fromBCS	No directional region specified. Using full positional plane.
+2019-02-15 19:05:49	INFO	imrebin::CasacRegionManager::fromBCS	Using all spectral channels.
+2019-02-15 19:05:49	INFO	imrebin::CasacRegionManager::fromBCS	Using polarizations ALL
+2019-02-15 19:05:49	INFO	imrebin::ImageRebinner::setFactors	Not all rebinning factors were specified, filling in those not specified with factors of 1, so will rebin according to factor=[5, 1, 1, 1]
+2019-02-15 19:05:50	INFO	imrebin::SubImageFactory::createImage	Creating image 'NGC5257_height_rebin.image' of shape [192, 960, 1, 1]
+2019-02-15 19:05:50	INFO	imrebin::ImageMaskAttacher::makeMask	Created mask `mask0'
+2019-02-15 19:05:51	INFO	imrebin::::	##### End Task: imrebin              #####
+2019-02-15 19:05:51	INFO	imrebin::::+	##########################################
+2019-02-15 19:12:24	INFO	viewer::::	
+2019-02-15 19:12:24	INFO	viewer::::+	##########################################
+2019-02-15 19:12:24	INFO	viewer::::+	##### Begin Task: viewer             #####
+2019-02-15 19:12:24	INFO	viewer::::	viewer(infile="NGC5257_height_rebin.image/",displaytype="raster",channel=0,zoom=1,outfile="",
+2019-02-15 19:12:24	INFO	viewer::::+	        outscale=1.0,outdpi=300,outformat="jpg",outlandscape=False,gui=True)
+2019-02-15 19:12:25	INFO	viewer::::	##### End Task: viewer               #####
+2019-02-15 19:12:25	INFO	viewer::::+	##########################################
+2019-02-15 19:13:15	INFO	rmtables::::	
+2019-02-15 19:13:15	INFO	rmtables::::+	##########################################
+2019-02-15 19:13:15	INFO	rmtables::::+	##### Begin Task: rmtables           #####
+2019-02-15 19:13:15	INFO	rmtables::::	rmtables(tablenames="NGC5257_height_rebin.image/")
+2019-02-15 19:13:15	INFO	rmtables::::	Removing NGC5257_height_rebin.image/
+2019-02-15 19:13:15	INFO	rmtables::::	##### End Task: rmtables             #####
+2019-02-15 19:13:15	INFO	rmtables::::+	##########################################
+2019-02-15 19:13:18	INFO	imrebin::::	
+2019-02-15 19:13:18	INFO	imrebin::::+	##########################################
+2019-02-15 19:13:18	INFO	imrebin::::+	##### Begin Task: imrebin            #####
+2019-02-15 19:13:18	INFO	imrebin::::	imrebin(imagename="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_height.image/",outfile="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_height_rebin.image",factor=[5, 5],region="",box="",
+2019-02-15 19:13:18	INFO	imrebin::::+	        chans="",stokes="",mask="",dropdeg=False,overwrite=False,
+2019-02-15 19:13:18	INFO	imrebin::::+	        stretch=False,crop=True)
+2019-02-15 19:13:18	INFO	imrebin::CasacRegionManager::fromBCS	No directional region specified. Using full positional plane.
+2019-02-15 19:13:18	INFO	imrebin::CasacRegionManager::fromBCS	Using all spectral channels.
+2019-02-15 19:13:18	INFO	imrebin::CasacRegionManager::fromBCS	Using polarizations ALL
+2019-02-15 19:13:18	INFO	imrebin::ImageRebinner::setFactors	Not all rebinning factors were specified, filling in those not specified with factors of 1, so will rebin according to factor=[5, 5, 1, 1]
+2019-02-15 19:13:18	INFO	imrebin::SubImageFactory::createImage	Creating image '/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_height_rebin.image' of shape [192, 192, 1, 1]
+2019-02-15 19:13:19	INFO	imrebin::ImageMaskAttacher::makeMask	Created mask `mask0'
+2019-02-15 19:13:19	INFO	imrebin::::	##### End Task: imrebin              #####
+2019-02-15 19:13:19	INFO	imrebin::::+	##########################################
+2019-02-15 19:13:35	INFO	viewer::::	
+2019-02-15 19:13:35	INFO	viewer::::+	##########################################
+2019-02-15 19:13:35	INFO	viewer::::+	##### Begin Task: viewer             #####
+2019-02-15 19:13:35	INFO	viewer::::	viewer(infile="NGC5257_height_rebin.image/",displaytype="raster",channel=0,zoom=1,outfile="",
+2019-02-15 19:13:35	INFO	viewer::::+	        outscale=1.0,outdpi=300,outformat="jpg",outlandscape=False,gui=True)
+2019-02-15 19:13:35	SEVERE	viewer::::	An error occurred running task viewer.
+2019-02-15 19:13:48	INFO	::casa	
+2019-02-15 19:13:48	INFO	::casa	CASA Version 5.4.0-68  
+2019-02-15 19:13:52	INFO	viewer::utils::verify	Verifying arguments....File existence checking failed for infile NGC5257_height_rebin.image/
+2019-02-15 19:13:52	WARN	viewer::utils::verify	Argument infile failed to verify.
+2019-02-15 19:13:52	SEVERE	viewer::::	An error occurred running task viewer.
+2019-02-15 19:14:37	INFO	viewer::::	
+2019-02-15 19:14:37	INFO	viewer::::+	##########################################
+2019-02-15 19:14:37	INFO	viewer::::+	##### Begin Task: viewer             #####
+2019-02-15 19:14:37	INFO	viewer::::	viewer(infile="NGC5257_height_rebin.image/",displaytype="raster",channel=0,zoom=1,outfile="",
+2019-02-15 19:14:37	INFO	viewer::::+	        outscale=1.0,outdpi=300,outformat="jpg",outlandscape=False,gui=True)
+2019-02-15 19:14:38	INFO	viewer::::	##### End Task: viewer               #####
+2019-02-15 19:14:38	INFO	viewer::::+	##########################################
+2019-02-15 23:06:36	INFO	imrebin::::	
+2019-02-15 23:06:36	INFO	imrebin::::+	##########################################
+2019-02-15 23:06:36	INFO	imrebin::::+	##### Begin Task: imrebin            #####
+2019-02-15 23:06:36	INFO	imrebin::::	imrebin(imagename="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_combine_noise40.pbcor.mom0/",outfile="/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_pbcor_rebin.mom0",factor=[5, 5],region="",box="",
+2019-02-15 23:06:36	INFO	imrebin::::+	        chans="",stokes="",mask="",dropdeg=False,overwrite=False,
+2019-02-15 23:06:36	INFO	imrebin::::+	        stretch=False,crop=True)
+2019-02-15 23:06:36	INFO	imrebin::CasacRegionManager::fromBCS	No directional region specified. Using full positional plane.
+2019-02-15 23:06:36	INFO	imrebin::CasacRegionManager::fromBCS	Using all spectral channels.
+2019-02-15 23:06:36	INFO	imrebin::CasacRegionManager::fromBCS	Using polarizations ALL
+2019-02-15 23:06:36	INFO	imrebin::ImageRebinner::setFactors	Not all rebinning factors were specified, filling in those not specified with factors of 1, so will rebin according to factor=[5, 5, 1, 1]
+2019-02-15 23:06:36	INFO	imrebin::SubImageFactory::createImage	Creating image '/1/home/heh15/workingspace/Arp240/scatter/image/NGC5257_12CO21_pbcor_rebin.mom0' of shape [192, 192, 1, 1]
+2019-02-15 23:06:36	INFO	imrebin::ImageMaskAttacher::makeMask	Created mask `mask0'
+2019-02-15 23:06:37	INFO	imrebin::::	##### End Task: imrebin              #####
+2019-02-15 23:06:37	INFO	imrebin::::+	##########################################
+2019-02-15 23:07:02	INFO	viewer::::	
+2019-02-15 23:07:02	INFO	viewer::::+	##########################################
+2019-02-15 23:07:02	INFO	viewer::::+	##### Begin Task: viewer             #####
+2019-02-15 23:07:02	INFO	viewer::::	viewer(infile="NGC5257_12CO21_pbcor_rebin.mom0/",displaytype="raster",channel=0,zoom=1,outfile="",
+2019-02-15 23:07:02	INFO	viewer::::+	        outscale=1.0,outdpi=300,outformat="jpg",outlandscape=False,gui=True)
+2019-02-15 23:07:03	INFO	viewer::::	##### End Task: viewer               #####
+2019-02-15 23:07:03	INFO	viewer::::+	##########################################

@@ -1,0 +1,20 @@
+
+############################################################
+# casa
+
+coverage.py: 
+check the binned image to have the coverage greater than 50%.
+
+ScaleHeight.py (ScaleHeight.ipynb)
+Use casa to make the scale height map of the image. 
+
+############################################################
+# python
+
+dens_dispers.py:
+Compare the density dispersion plot with Sun et al. 2019. 
+
+H_sd.ipynb:
+Compare the scale height with surface density. The scale height is
+from "ScaleHeight.py"
+

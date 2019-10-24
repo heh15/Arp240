@@ -1,0 +1,7 @@
+casa:
+coverage.py: 
+check the binned image to have the coverage greater than 50%.
+
+ScaleHeight.py:
+Use casa to make the scale height map of the image. 
+
