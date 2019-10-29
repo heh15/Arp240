@@ -94,6 +94,25 @@ def sfr_70um(f_her):
 
     return SFR_tot
 
+def sfr_24and70(f24,f70,pixelsize=2.45):
+    '''
+    from Galametz et al. 2013
+    f24 in MJy/sr
+    f70 in Jy
+    pixelsize of spitzer in arcsec
+    '''
+    flux=f24*10**(-17)/(4.25*10**10)*pixelsize**2
+    L24=4*math.pi*(100*10**6*3.086*10**18)**2*flux
+    nuL24=L24*1.2*10**13
+    flux_erg=f70*10**(-23)
+    L70=4*math.pi*(100*10**6*3.086*10**18)**2*flux_erg
+    nuL70=4.283*10**12*L70
+    LTIR=3.98*nuL24+1.553*nuL70
+    error=0.283/3.98+0.058/1.553
+    SFR=10**-43.41*LTIR
+    
+    return SFR, error
+
 def sfr_radio(flux,freq,d):
     '''
     flux in Jy/beam
@@ -115,6 +134,16 @@ def Apmask_convert(aperture,data_cut):
 
     return ap_masked
 
+# convert region to the mask. 
+def Regmask_convert(aperture,data_cut):
+    apmask=aperture.to_mask()
+    shape=data_cut.shape
+    mask=apmask.to_image(shape=((shape[0],shape[1])))
+    ap_mask=mask==0
+    ap_masked=np.ma.masked_where(ap_mask,data_cut)
+
+    return ap_masked
+
 def round_sig(x, sig=3):
     return round(x, sig-int(floor(log10(abs(x))))-1)
 
@@ -125,26 +154,14 @@ def flux_aperture_get(data_cut,aperture):
 
     return flux
 
+def flux_mask_get(data_region,rms,chans,chan_width):
+    flux=np.ma.sum(data_region)/beam_area_pix
+    chans_tmp=chans+np.zeros((np.shape(data_region)[0],np.shape(data_region)[1]))
+    error=np.sqrt(chans_tmp)*rms*chan_width/sqrt(beam_area_pix)
+    error_masked=np.ma.masked_where(data_region.mask,error)
+    uncertainty=math.sqrt(np.ma.sum(np.power(error_masked,2)))
+    return flux, uncertainty
 
-
-def sfr_24and70(f24,f70,pixelsize=2.45):
-    '''
-    from Galametz et al. 2013
-    f24 in MJy/sr
-    f70 in Jy
-    pixelsize of spitzer in arcsec
-    '''
-    flux=f24*10**(-17)/(4.25*10**10)*pixelsize**2
-    L24=4*math.pi*(100*10**6*3.086*10**18)**2*flux
-    nuL24=L24*1.2*10**13
-    flux_erg=f70*10**(-23)
-    L70=4*math.pi*(100*10**6*3.086*10**18)**2*flux_erg
-    nuL70=4.283*10**12*L70
-    LTIR=3.98*nuL24+1.553*nuL70
-    error=0.283/3.98+0.058/1.553
-    SFR=10**-43.41*LTIR
-    
-    return SFR, error
 
 ############################################################
 # main program
@@ -153,10 +170,12 @@ wavelength=['24um','70um','33GHz','24nd70']
 value=['region','flux','uncertainty','SFR']
 df=pd.DataFrame(index=wavelength,columns=value)
 df_center=pd.DataFrame(index=wavelength,columns=value)
+df_arm=pd.DataFrame(index=wavelength,columns=value)
 
 ### south region 
 
 ## 33 GHz image
+rms_33=5.64e-5
 pixsize=((5.81776417e-07*u.rad)**2).to(u.arcsec**2)  # from the imhead in casa
 beamarea=6*u.arcsec*6*u.arcsec*1.1331
 
@@ -178,10 +197,13 @@ flux=float(flux/(beamarea/pixsize))
 freq=33
 SFR_33GHz=sfr_radio(flux_33GHz,freq,d) 
 
+flux_error=aperture_photometry(data_33GHz,apertures=south_pix,error=rms_33)['aperture_sum_err'][0]/(np.sqrt(1.1331*6*6/0.12**2))
+# error=np.sqrt(np.ma.count(arm_masked)/(1.1331*6*6/0.12**2))*rms_33
+
 df['region']['33GHz']='south'
 df['flux']['33GHz']=flux_33GHz
 df['SFR']['33GHz']=SFR_33GHz
-df['uncertainty']['33GHz']=error/flux_33GHz*SFR_33GHz
+df['uncertainty']['33GHz']=flux_error/flux_33GHz*SFR_33GHz
 
 # Modify the Murphy equation. 
 
@@ -280,10 +302,12 @@ flux=float(flux/(beamarea/pixsize))
 freq=33
 SFR_33GHz=sfr_radio(flux_33GHz,freq,d) 
 
+flux_error=aperture_photometry(data_33GHz,apertures=center_pix,error=rms_33)['aperture_sum_err'][0]/(np.sqrt(1.1331*6*6/0.12**2))
+
 df_center['region']['33GHz']='center'
 df_center['flux']['33GHz']=flux_33GHz
 df_center['SFR']['33GHz']=SFR_33GHz
-df_center['uncertainty']['33GHz']=error/flux_33GHz*SFR_33GHz
+df_center['uncertainty']['33GHz']=flux_error/flux_33GHz*SFR_33GHz
 
 ## herschel flux 
 
@@ -344,56 +368,77 @@ df_center['uncertainty']['24nd70']=SFR[0]*SFR[1]
 ### south west arm
 
 ## 33 GHz
+rms_33=5.64e-5
+# flux=7.56e-4 for 33 GHz continuum
 
-# flux=2.1e-3; flux_sub=2.1e-3-df['flux']['33GHz']
-# freq=33
-# SFR=sfr_radio(flux_sub, freq, d)
+# fig=plt.figure() 
+# ax=plt.subplot('111',projection=wcs_33GHz)
+# ax.imshow(data_33GHz,origin='lower')
+# ax.contour(data_33GHz, levels=[3e-4])
 
-fig=plt.figure() 
-ax=plt.subplot('111',projection=wcs_33GHz)
-ax.imshow(data_33GHz,origin='lower')
-ax.contour(data_33GHz, levels=[3e-4])
+from regions import read_ds9
+file=regionDir+'NGC5257_arm.reg'
+arm_sky=read_ds9(file)[0]
+arm_pix=arm_sky.to_pixel(wcs_33GHz)
+arm_pix.plot(color='red')
+arm_masked=Regmask_convert(arm_pix, data_33GHz)
+flux=np.ma.sum(arm_masked)/(1.1331*6*6/0.12**2)
+error=np.sqrt(np.ma.count(arm_masked)/(1.1331*6*6/0.12**2))*rms_33
+SFR=sfr_radio(flux, 33, 100)
 
-ra=-2.7057752478718142,;dec=0.014663001991737822
-position=SkyCoord(dec=dec*u.rad,ra=ra*u.rad,frame='icrs')
-center_sky=SkyCircularAperture(positions=position,r=3*ratio*u.arcsec)
-center_pix=center_sky.to_pixel(wcs_33GHz)
-center_pix.plot(color='red')
+df_arm['region']['33GHz']='arm'
+df_arm['flux']['33GHz']=flux
+df_arm['SFR']['33GHz']=SFR
+df_arm['uncertainty']['33GHz']=error/flux*SFR
 
-ra=-2.7057736283005824;dec=0.014605178692092591
-position=SkyCoord(dec=dec*u.rad,ra=ra*u.rad,frame='icrs')
-south_sky=SkyCircularAperture(positions=position,r=3*ratio*u.arcsec)
-south_pix=south_sky.to_pixel(wcs_33GHz)
-south_pix.plot(color='red')
 
 ## spitzer
 
-def Apmask_convert(aperture,data_cut):
-    apmask=aperture.to_mask()
-    shape=data_cut.shape
-    mask=apmask.to_image(shape=((shape[0],shape[1])))
-    ap_mask=mask==0
-    ap_masked=np.ma.masked_where(ap_mask,data_cut)
+filename=regionDir+'NGC5257_arm.reg'
+arm_sky=read_ds9(filename)[0]
+arm_pix=arm_sky.to_pixel(wcs_spi)
+arm_masked=Regmask_convert(arm_pix, data_24um)
 
-    return ap_masked
+# fig=plt.figure()
+# ax=plt.subplot('111', projection=wcs_spi)
+# plt.imshow(data_24um, origin='lower')
+# arm_pix.plot(color='red')
 
-filename=regionDir+'southwest_tmp.reg'
-southwest_sky=read_ds9(filename)[0]
-southwest_pix=southwest_sky.to_pixel(wcs_spi)
-southwest_mask=Apmask_convert(southwest_pix, data_24um)
-
-flux_24um=np.ma.sum(southwest_mask)
+flux_24um=np.ma.sum(arm_masked)
+pixelsize=2.45
+flux=flux_24um*10**6/(4.25*10**10)*pixelsize**2
 SFR_24um=sfr_24um(flux_24um,pixelsize=2.45)
-SFR24um_sub=SFR_24um-df['SFR']['24um']
+
+df_arm['region']['24um']='arm'
+df_arm['flux']['24um']=flux
+df_arm['SFR']['24um']=SFR_24um
 
 ## herschel
-southwest_sky=read_ds9(filename)[0]
-southwest_pix=southwest_sky.to_pixel(wcs_her)
-southwest_mask=Apmask_convert(southwest_pix, data_70um)
+arm_sky=read_ds9(filename)[0]
+arm_pix=arm_sky.to_pixel(wcs_her)
+arm_masked=Regmask_convert(arm_pix, data_70um)
 
-flux_70um=np.ma.sum(southwest_mask)
+fig=plt.figure()
+ax=plt.subplot('111', projection=wcs_her)
+ax.imshow(data_70um, origin='lower')
+arm_pix.plot(color='red')
+
+flux_70um=np.ma.sum(arm_masked)
 SFR_70um=sfr_70um(flux_70um)
-SFR70um_sub=SFR_70um-df['SFR']['70um']
+
+df_arm['region']['70um']='arm'
+df_arm['flux']['70um']=flux_70um
+df_arm['SFR']['70um']=SFR_70um
+
+# spitzer and herschel combined
+result=sfr_24and70(flux_24um,flux_70um,pixelsize=2.45)
+SFR_combine=result[0]
+error_combine=SFR_combine*result[1]
+
+df_arm['region']['24nd70']='arm'
+df_arm['flux']['24nd70']=flux_70um
+df_arm['SFR']['24nd70']=SFR_combine
+df_arm['uncertainty']['24nd70']=error_combine
 
 ### save the data frame
 
