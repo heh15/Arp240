@@ -45,6 +45,7 @@ logDir=Dir+'log/'
 picDir=Dir+'picture/'
 scriptDir=Dir+'script/'
 imageDir=Dir+'image/'
+regionDir=Dir+'region/'
 os.chdir(workDir)
 
 ############################################################
@@ -230,25 +231,34 @@ position=SkyCoord(dec=dec,ra=ra,frame='icrs')
 southarm=SkyCircularAperture(positions=position,r=3*2*u.arcsec).to_pixel(herschel_wcs_cut)
 
 
+## add the region file 
+from regions import read_ds9
+file=regionDir+'NGC5257_arm.reg'
+arm_sky=read_ds9(file)[0]
+armpix_spi=arm_sky.to_pixel(Spitzer_wcs_cut)
+armpix_her=arm_sky.to_pixel(herschel_wcs_cut)
+
 ### plot the figure
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 fig=plt.figure()
 ax=plt.subplot('111',projection=Spitzer_wcs_cut)
-ax.title.set_text('spitzer 24um')
-im=ax.imshow(Spitzer_cut,origin='lower')
-center_spi.plot(color='red')
-south_spi.plot(color='red')
-southarm.plot(color='red')
+ax.title.set_text('Spitzer 24um')
+im=ax.imshow(Spitzer_cut,origin='lower', cmap='gist_ncar_r')
+center_spi.plot(color='black')
+south_spi.plot(color='black')
+southarm.plot(color='black')
+armpix_spi.plot(color='black')
 plt.savefig(picDir+'spitzer_24um.png',bbox_inches='tight',pad_inches=0.2)
 
 fig=plt.figure()
 ax1=plt.subplot('111',projection=herschel_wcs_cut)
-ax1.title.set_text('herschel 70um')
-im=ax1.imshow(herschel_cut,origin='lower')
-center_her.plot(color='red')
-south_her.plot(color='red')
-southarm.plot(color='red')
+ax1.title.set_text('Herschel 70um')
+im=ax1.imshow(herschel_cut,origin='lower', cmap='gist_ncar_r')
+center_her.plot(color='black')
+south_her.plot(color='black')
+southarm.plot(color='black')
+armpix_her.plot(color='black')
 plt.savefig(picDir+'herschel_70um.png',bbox_inches='tight',pad_inches=0.2)
 
 # fig=plt.figure()
@@ -347,12 +357,12 @@ data_33smo=fits_import('NGC5257_33GHz_smooth.fits')[1]
 position=SkyCoord(dec=0.0146051786921*u.rad,ra=-2.7057736283*u.rad,frame='fk5')
 south_sky=SkyEllipticalAperture(position,a=3*ratio*u.arcsec,b=3*ratio*u.arcsec,theta=0.0*u.degree)
 south_pix=south_sky.to_pixel(wcs=wcs_33smo)
-fig=plt.figure()
-ax=plt.subplot(projection=wcs_33smo)
-ax.imshow(data_33smo,origin='lower')
-south_pix.plot()
-# plt.savefig(picDir+'33GHz_south.png')
-south_33=south_pix
+# fig=plt.figure()
+# ax=plt.subplot(projection=wcs_33smo)
+# ax.imshow(data_33smo,origin='lower')
+# south_pix.plot()
+# # plt.savefig(picDir+'33GHz_south.png')
+# south_33=south_pix
 
 
 
@@ -446,11 +456,11 @@ wcs_95GHz=fits_import(fitsfile)[0]
 position=SkyCoord(dec=0.014607*u.rad,ra=-2.705775*u.rad,frame='fk5')
 south_sky=SkyEllipticalAperture(position,a=3*ratio*u.arcsec,b=3*ratio*u.arcsec,theta=123.58*u.degree)
 south_pix=south_sky.to_pixel(wcs=wcs_95GHz)
-fig=plt.figure()
-ax=plt.subplot(projection=wcs_her)
-ax.imshow(data_95GHz,origin='lower')
-south_pix.plot()
-plt.title('95GHz')
+# fig=plt.figure()
+# ax=plt.subplot(projection=wcs_her)
+# ax.imshow(data_95GHz,origin='lower')
+# south_pix.plot()
+# plt.title('95GHz')
 # plt.savefig(picDir+'70um_south.png')
 south_95GHz=south_pix
 
