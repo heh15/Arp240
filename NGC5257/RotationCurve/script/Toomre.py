@@ -63,6 +63,7 @@ from photutils import aperture_photometry
 from matplotlib import rcParams
 import glob
 rcParams['mathtext.default']='regular'
+import matplotlib.colors as colors
 
 
 ############################################################
@@ -78,7 +79,7 @@ mapDir=Dir+'map/'
 ############################################################
 # basic settings
 incl=0.42
-PA=111.68
+PA=95
 ra=15*(13*u.degree+39*u.arcmin+52.922*u.arcsec)
 dec=50*u.arcmin+24.296*u.arcsec
 center=SkyCoord(dec=dec,ra=ra,frame='icrs')
@@ -124,7 +125,7 @@ def aperture_ring(radius_in,radius_out,wcs):
 def Apmask_convert(aperture,data_masked):
     data_cut=data_masked.data
     data_mask=data_masked.mask
-    apmask=aperture.to_mask(method='center')[0]
+    apmask=aperture.to_mask(method='center')
     shape=data_cut.shape
     mask=apmask.to_image(shape=((shape[0],shape[1])))
     mask_tmp=mask==0
@@ -330,6 +331,7 @@ vdstar=vdstar.data
 mask=np.ma.masked_invalid(mom2).mask
 vdstar[mask]='nan'
 
+
 Q_tot=Q*(1+sd_star/sds*mom2/vdstar)**(-1)
 Qtot_binned=np.nanmean(np.nanmean(Q_tot.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
 
@@ -337,9 +339,9 @@ SFR=fits.getdata(imageDir+'NGC5257_33GHz_pbcor_regrid.fits')[0][0]
 SFR_binned=np.nanmean(np.nanmean(SFR.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
 beammajor=0.7; beamminor=0.58; freq=33
 SFR_phy_binned=ssfr_radio(SFR_binned, beammajor, beamminor, freq, D)
-wcs_sfr=WCS(fits.getheader(imageDir+'NGC5257_33GHz_pbcor_regrid.fits'))
+wcs_sfr=WCS(fits.getheader(imageDir+'NGC5257_33GHz_pbcor_regrid_smooth.fits'))
 wcs_sfr=wcs_sfr.celestial
-levels=[4*1.3e-5]
+levels=[2*1.0e-5]
 
 fig=plt.figure()
 sc=plt.scatter(R_binned,Qtot_binned,c=mom0_binned,marker='.', cmap='brg_r')
@@ -361,16 +363,21 @@ fig=plt.figure()
 position=center; size=u.Quantity((36,36),u.arcsec)
 Qtot_cut_wcs=cut_2d(Q_tot, position, size, wcs)[0]
 Qtot_cut=cut_2d(Q_tot, position, size, wcs)[1]
-# Qtot_cutbin=np.nanmean(np.nanmean(Qtot_cut.reshape(int(540/bin),bin,int(420/bin),bin),axis=-1),axis=1)
+Qtot_cutbin=np.nanmean(np.nanmean(Qtot_cut.reshape(int(360/bin),bin,int(360/bin),bin),axis=-1),axis=1)
 SFR_cut=cut_2d(SFR, position, size, wcs)[1]
+SFR_cutbin=np.nanmean(np.nanmean(SFR_cut.reshape(int(360/bin),bin,int(360/bin),bin),axis=-1),axis=1)
 
-ax=plt.subplot(projection=Qtot_cut_wcs)
-im=ax.imshow(Qtot_cut,origin='lower', vmax=np.nanmax(Qtot_binned))
+# ax=plt.subplot(projection=Qtot_cut_wcs)
+ax=plt.subplot('111')
+ax.set_xticks([])
+ax.set_yticks([])
+im=ax.imshow(Qtot_cutbin,origin='lower', vmax=3.0, norm=colors.PowerNorm(gamma=0.5))
 # rings[11].plot()
 # rings[13].plot()
 cbar=plt.colorbar(im)
-cbar.set_label('$ Q_{tot}$',fontsize=24)
-ax.contour(SFR_cut,levels=levels,colors=['red'])
+cbar.set_label('$Q_{tot}$',fontsize=24)
+cbar.ax.tick_params(labelsize=20)
+ax.contour(SFR_cutbin,levels=levels,colors=['red'])
 plt.savefig(picDir+'NGC5257_Toomre_map.png')
 
 # fig=plt.figure()
@@ -379,15 +386,39 @@ plt.savefig(picDir+'NGC5257_Toomre_map.png')
 # cbar=plt.colorbar(im)
 
 
-### plot the trend of the correction factor ###
-correction=(1+sd_star/sds*mom2/vdstar)**(-1)
-correction_binned=np.nanmean(np.nanmean(correction.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
-Q_binned=np.nanmean(np.nanmean(Q.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
-epsiarray_binned=np.nanmean(np.nanmean(epsi_array.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
+# ### plot the trend of the correction factor ###
+# correction=(1+sd_star/sds*mom2/vdstar)**(-1)
+# correction_binned=np.nanmean(np.nanmean(correction.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
+# Q_binned=np.nanmean(np.nanmean(Q.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
+# epsiarray_binned=np.nanmean(np.nanmean(epsi_array.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
 
+# fig=plt.figure()
+# plt.scatter(R_binned, correction_binned, marker='.')
+
+
+## check velocity dispersion
+mom2_binned=np.nanmean(np.nanmean(mom2.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
+vdstar_binned=np.nanmean(np.nanmean(vdstar.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
 fig=plt.figure()
-plt.scatter(R_binned, correction_binned, marker='.')
+plt.scatter(R_binned, vdstar_binned, marker='.', label='star')
+plt.scatter(R_binned, mom2_binned, marker='.', label='gas')
+plt.xlabel('Radius (kpc)', fontsize=20)
+plt.ylabel('velocity dispersion (km/s)', fontsize=20)
+plt.title('NGC 5257 velocity dispersion', fontsize=20)
+plt.legend(fontsize=20)
+plt.savefig(picDir+'NGC5257_dispersion_check.png')
 
+## check the Q and Q_tot
+Q_binned=np.nanmean(np.nanmean(Q.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
+fig=plt.figure()
+plt.scatter(R_binned, Q_binned, marker='.', label='gas')
+plt.scatter(R_binned, Qtot_binned, marker='.', label='2 component')
+plt.xlabel('Radius (kpc)', fontsize=20)
+plt.ylabel('Q', fontsize=20)
+plt.ylim(0,4)
+plt.legend()
+plt.title('NGC 5257 Q comparison')
+plt.savefig(picDir+'NGC5257_Q_check.png')
 
 ### save the angular velocity, beta and Q ###
 

@@ -33,6 +33,11 @@ import shutil
 import pandas as pd
 
 ############################################################
+# basic setting
+
+D=99
+
+############################################################
 # function  
 def fits_import(fitsimage):
     hdr = fits.open(fitsimage)[0].header
@@ -51,6 +56,12 @@ def Apmask_convert(aperture,data_cut):
     ap_masked=np.ma.masked_where(ap_mask,data_cut)
 
     return ap_masked
+
+def mass_calc(flux_36,flux_45):
+    mass=math.pow(10,5.65)*np.power(flux_36,2.85)*np.power(flux_45,-1.85)*(D/0.05)**2*0.7
+
+    return mass
+
 
 ############################################################
 # main program
@@ -72,4 +83,9 @@ wholestar_pix=whole_star.to_pixel(wcs)
 whole_masked=Apmask_convert(wholestar_pix, mass)
 SM=np.ma.sum(whole_masked)*(480*0.3)**2
 
+#### check total stellar mass
 
+flux_36=19448.31*1e6/(4.25e10)*0.3**2
+flux_45=13959*1e6/(4.25e10)*0.3**2
+
+Mstar_total=mass_calc(flux_36, flux_45)

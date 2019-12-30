@@ -241,10 +241,13 @@ plt.errorbar(xplot[ok],yplot[ok],yerr[ok],color='black',marker="o",label='12CO d
 plt.plot(ladder,model1,color='blue',marker=None,label='model')
 plt.errorbar(xplot[ok2],yplot[ok2],yerr[ok2],color='black',marker="s",label='13CO data')
 plt.plot(ladder_13co,model1_13co,color='blue',marker=None)
-plt.ylim(0.05,2.0)
-plt.ylabel('K (per km/s)')
-plt.xlabel('Upper J')
-plt.legend()
+plt.ylim(0.01,1.0)
+# plt.xlim(None,8)
+plt.ylabel('K (per km/s)', size=20)
+plt.xlabel('Upper J', size=20)
+plt.legend(fontsize=15)
+ax.tick_params(labelsize=15)
+fig.tight_layout()
 plt.savefig('fig_sled.png')
 
 ############################################################
@@ -256,18 +259,20 @@ i=1;j=0
 presscontour=[3,4,5,6,7,8]
 fig=plt.figure()
 ax=fig.add_subplot(111)
-ax.set_ylabel('tkin K')
-ax.set_xlabel('density')
+ax.set_ylabel(r'$\log_{10}(T_{kin})$ (K)', size=20)
+ax.set_xlabel('$\log_{10}(n_{H2})$ (cm$^{-3}$)', size=20)
 ax.contourf(dists['all'][i,j][:,:,1]*mult[j], dists['all'][i,j][:,:,0]*mult[i]+add[i], dists['all'][i,j][:,:,2],5, cmap=cm.gray_r, alpha = 0.8,origin='lower') 
 ax.axvline(x=cube[j]*mult[j]+add[j],color='k',linestyle='--',label='4D Max')
 ax.axhline(y=cube[i]*mult[i]+add[i],color='k',linestyle='--')
-ax.axvline(x=modemed[j]*mult[j]+add[j],color='green',label='Mode')
+ax.axvline(x=modemed[j]*mult[j]+add[j],color='green',label='Mode Mean')
 ax.axhline(y=modemed[i]*mult[i]+add[i],color='green')
 for p in presscontour:
     ax.plot([ax.set_xlim()[0],p-ax.set_ylim()[0]],
             [p-ax.set_xlim()[0],ax.set_ylim()[0]],':k')
-    ax.annotate('{:.0f}'.format(p),xy=(p-ax.set_ylim()[1],ax.set_ylim()[1]),xycoords='data')
-plt.legend()
+    ax.annotate('{:.0f}'.format(p),xy=(p-ax.set_ylim()[1],ax.set_ylim()[1]),xycoords='data', fontsize=15)
+ax.tick_params(labelsize=15)
+plt.legend(fontsize=15)
+fig.tight_layout(pad=1.5)
 plt.savefig('fig_contour.png')
 
 
@@ -278,17 +283,18 @@ mode=s['modes'][0]
 bacdcontour=[15,16,17,18,19,20,21,22,23]
 fig=plt.figure()
 ax=fig.add_subplot(111)
-ax.set_ylabel('ff 1')
-ax.set_xlabel('cdmol 1')
+ax.set_ylabel('$\log_{10} (\eta_{bf})$', fontsize=20)
+ax.set_xlabel('$\log_{10}(N_{12CO})$ (cm$^{-2}$)', fontsize=20)
 ax.contourf(dists['all'][i,j][:,:,1]*mult[j]+add[j], dists['all'][i,j][:,:,0]*mult[i]+add[i], dists['all'][i,j][:,:,2],5, cmap=cm.gray_r, alpha = 0.8,origin='lower') 
 ax.axvline(x=cube[j]*mult[j]+add[j],color='k',linestyle='--',label='4D Max')
 ax.axhline(y=cube[i]*mult[i]+add[i],color='k',linestyle='--')
-ax.axvline(x=modemed[j]*mult[j]+add[j],color='green',label='Mode')
+ax.axvline(x=modemed[j]*mult[j]+add[j],color='green',label='Mode Mean')
 ax.axhline(y=modemed[i]*mult[i]+add[i],color='green')
 for p in bacdcontour: 
     ax.plot([ax.set_xlim()[0],p-ax.set_ylim()[0]],
                         [p-ax.set_xlim()[0],ax.set_ylim()[0]],':k')
-    ax.annotate('{:.0f}'.format(p),xy=(p-ax.set_ylim()[1],ax.set_ylim()[1]),xycoords='data')
-
-plt.legend()
+    ax.annotate('{:.0f}'.format(p),xy=(p-ax.set_ylim()[1],ax.set_ylim()[1]),xycoords='data', fontsize=15)
+ax.tick_params(labelsize=15)
+plt.legend(fontsize=15)
+fig.tight_layout(pad=1.5)
 plt.savefig('fig_contour2.png')

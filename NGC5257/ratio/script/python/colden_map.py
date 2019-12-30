@@ -105,6 +105,14 @@ I12_binned=np.nanmean(np.nanmean(I12.reshape(subnum,5,subnum,5),axis=-1),axis=1)
 # I12_binned[I12_binned<5*1.6e-3*10*np.sqrt(50)]='nan'
 I12K=I12_binned/(0.0109*bmaj*bmin*(112/115.27)**2)
 
+## 12CO10 moments 8 map
+fitsimage=imageDir+'12CO10/NGC5257_12CO10_combine_contsub_smooth_pbcor_mom8.fits'
+wcs=fits_import(fitsimage)[0]
+data_masked=fits_import(fitsimage)[1]
+
+I12_peak=np.copy(data_masked)
+I12peak_binned=np.nanmean(np.nanmean(I12_peak.reshape(subnum,5,subnum,5),axis=-1),axis=1)
+I12peak_K=I12peak_binned/(0.0109*bmaj*bmin*(112/115.27)**2)
 
 ## velocity dispersion
 fitsimage=imageDir+'12CO10/NGC5257_12CO10_combine_contsub_mom2.fits'
@@ -116,6 +124,7 @@ linewidth_binned=np.nanmean(np.nanmean(linewidth.reshape(subnum,5,subnum,5),axis
 ### exctitation temperature
 T_ex=(I13K/linewidth_binned)/filling/(1-np.exp(-tau))
 # T_ex=20
+Tk=5.5/(np.log(1+5.5/(I12peak_K/filling+0.82)))
 
 ### column density
 N_13=3e14/(1-np.exp(-5.29/T_ex))*tau/(1-np.exp(-tau))*I13K
@@ -184,9 +193,9 @@ fig=plt.figure()
 ax=plt.subplot()
 
 position=(32,32); size=(30,30)
-alpha_cut=Cutout2D(data=T_ex,position=position,size=size).data
+Tex_cut=Cutout2D(data=T_ex,position=position,size=size).data
 
-im=ax.imshow(alpha_cut,origin='lower', norm=colors.PowerNorm(gamma=0.5))
+im=ax.imshow(Tex_cut,origin='lower', norm=colors.PowerNorm(gamma=0.5))
 ax.set_xticks([])
 ax.set_yticks([])
 cbar=plt.colorbar(im)
@@ -194,3 +203,7 @@ cbar.ax.tick_params(labelsize=20)
 cbar.set_label(r'$T_{ex} (K)$', fontsize=25)
 fig.tight_layout()
 plt.savefig(picDir+'NGC5257_Tex.png')
+
+fig=plt.figure()
+plt.imshow((Tk), origin='lower')
+

@@ -83,16 +83,18 @@ def sfr_24um(f_mjsr,pixelsize=2.45):
     L_nu=4*math.pi*(100*10**6*3.086*10**18)**2*flux
     L=L_nu*1.2*10**13
     SFR_tot=10**(-42.69)*L
+    LTIR=10**1.336*(L/3.83e33)**0.954
     
-    return SFR_tot
+    return SFR_tot, LTIR
 
 def sfr_70um(f_her):
     flux_erg=f_her*10**(-23)
     L_nu=4*math.pi*(100*10**6*3.086*10**18)**2*flux_erg
     L=4.283*10**12*L_nu
     SFR_tot=10**(-43.23)*L
+    LTIR=10**0.567*(L/3.83e33)**0.973
 
-    return SFR_tot
+    return SFR_tot, LTIR
 
 def sfr_24and70(f24,f70,pixelsize=2.45):
     '''
@@ -167,7 +169,7 @@ def flux_mask_get(data_region,rms,chans,chan_width):
 # main program
 
 wavelength=['24um','70um','33GHz','24nd70']
-value=['region','flux','uncertainty','SFR']
+value=['region','flux','uncertainty','SFR', 'SFR_TIR']
 df=pd.DataFrame(index=wavelength,columns=value)
 df_center=pd.DataFrame(index=wavelength,columns=value)
 df_arm=pd.DataFrame(index=wavelength,columns=value)
@@ -197,7 +199,8 @@ flux=float(flux/(beamarea/pixsize))
 freq=33
 SFR_33GHz=sfr_radio(flux_33GHz,freq,d) 
 
-flux_error=aperture_photometry(data_33GHz,apertures=south_pix,error=rms_33)['aperture_sum_err'][0]/(np.sqrt(1.1331*6*6/0.12**2))
+error=np.full(np.shape(data_33GHz), rms_33)
+flux_error=aperture_photometry(data_33GHz,apertures=south_pix,error=error)['aperture_sum_err'][0]/(np.sqrt(1.1331*6*6/0.12**2))
 # error=np.sqrt(np.ma.count(arm_masked)/(1.1331*6*6/0.12**2))*rms_33
 
 df['region']['33GHz']='south'
@@ -242,7 +245,9 @@ south_pix=south_sky.to_pixel(wcs_her)
 # south_pix.plot()
 
 flux=aperture_photometry(data_70um,apertures=south_pix)['aperture_sum'][0]
-SFR_70um=sfr_70um(flux)
+SFR_70um=sfr_70um(flux)[0]
+LTIR_70um=sfr_70um(flux)[1]
+df['SFR_TIR']['70um']=LTIR_70um*3.83e33*10**(-43.41)
 
 df['region']['70um']='south'
 df['flux']['70um']=flux
@@ -269,13 +274,15 @@ south_pix=south_sky.to_pixel(wcs_spi)
 flux_mjsr=aperture_photometry(data_24um,apertures=south_pix)['aperture_sum'][0]
 pixelsize=2.45
 flux=flux_mjsr*10**6/(4.25*10**10)*pixelsize**2
-SFR_24um=sfr_24um(flux_mjsr)
+SFR_24um=sfr_24um(flux_mjsr)[0]
+LTIR_24um=sfr_24um(flux_mjsr)[1]
+df['SFR_TIR']['24um']=LTIR_24um*3.83e33*10**(-43.41)
 
 df['region']['24um']='south'
 df['flux']['24um']=flux
 df['SFR']['24um']=SFR_24um
 
-SFR=sfr_24and70(df['flux']['24um'],df['flux']['70um'])
+SFR=sfr_24and70(flux_mjsr, df['flux']['70um'])
 df['SFR']['24nd70']=SFR[0]
 df['uncertainty']['24nd70']=SFR[0]*SFR[1]
 
@@ -302,7 +309,8 @@ flux=float(flux/(beamarea/pixsize))
 freq=33
 SFR_33GHz=sfr_radio(flux_33GHz,freq,d) 
 
-flux_error=aperture_photometry(data_33GHz,apertures=center_pix,error=rms_33)['aperture_sum_err'][0]/(np.sqrt(1.1331*6*6/0.12**2))
+error=np.full(np.shape(data_33GHz), rms_33)
+flux_error=aperture_photometry(data_33GHz,apertures=center_pix,error=error)['aperture_sum_err'][0]/(np.sqrt(1.1331*6*6/0.12**2))
 
 df_center['region']['33GHz']='center'
 df_center['flux']['33GHz']=flux_33GHz
@@ -329,7 +337,10 @@ center_pix=center_sky.to_pixel(wcs_her)
 # center_pix.plot)
 
 flux=aperture_photometry(data_70um,apertures=center_pix)['aperture_sum'][0]
-SFR_70um=sfr_70um(flux)
+SFR_70um=sfr_70um(flux)[0]
+
+LTIR_70um=sfr_70um(flux)[1]
+df_center['SFR_TIR']['70um']=LTIR_70um*3.83e33*10**(-43.41)
 
 df_center['region']['70um']='center'
 df_center['flux']['70um']=flux
@@ -355,13 +366,16 @@ center_pix=center_sky.to_pixel(wcs_spi)
 flux_mjsr=aperture_photometry(data_24um,apertures=center_pix)['aperture_sum'][0]
 pixelsize=2.45
 flux=flux_mjsr*10**6/(4.25*10**10)*pixelsize**2
-SFR_24um=sfr_24um(flux_mjsr)
+SFR_24um=sfr_24um(flux_mjsr)[0]
+
+LTIR_24um=sfr_24um(flux_mjsr)[1]
+df_center['SFR_TIR']['24um']=LTIR_24um*3.83e33*10**(-43.41)
 
 df_center['region']['24um']='center'
 df_center['flux']['24um']=flux
 df_center['SFR']['24um']=SFR_24um
 
-SFR=sfr_24and70(df_center['flux']['24um'],df_center['flux']['70um'])
+SFR=sfr_24and70(flux_mjsr, df_center['flux']['70um'])
 df_center['SFR']['24nd70']=SFR[0]
 df_center['uncertainty']['24nd70']=SFR[0]*SFR[1]
 
@@ -380,7 +394,7 @@ from regions import read_ds9
 file=regionDir+'NGC5257_arm.reg'
 arm_sky=read_ds9(file)[0]
 arm_pix=arm_sky.to_pixel(wcs_33GHz)
-arm_pix.plot(color='red')
+# arm_pix.plot(color='red')
 arm_masked=Regmask_convert(arm_pix, data_33GHz)
 flux=np.ma.sum(arm_masked)/(1.1331*6*6/0.12**2)
 error=np.sqrt(np.ma.count(arm_masked)/(1.1331*6*6/0.12**2))*rms_33
@@ -399,15 +413,18 @@ arm_sky=read_ds9(filename)[0]
 arm_pix=arm_sky.to_pixel(wcs_spi)
 arm_masked=Regmask_convert(arm_pix, data_24um)
 
-# fig=plt.figure()
-# ax=plt.subplot('111', projection=wcs_spi)
-# plt.imshow(data_24um, origin='lower')
-# arm_pix.plot(color='red')
+fig=plt.figure()
+ax=plt.subplot('111', projection=wcs_spi)
+plt.imshow(data_24um, origin='lower')
+arm_pix.plot(color='red')
 
 flux_24um=np.ma.sum(arm_masked)
 pixelsize=2.45
 flux=flux_24um*10**6/(4.25*10**10)*pixelsize**2
-SFR_24um=sfr_24um(flux_24um,pixelsize=2.45)
+SFR_24um=sfr_24um(flux_24um,pixelsize=2.45)[0]
+
+LTIR_24um=sfr_24um(flux_24um, pixelsize=2.45)[1]
+df_arm['SFR_TIR']['24um']=LTIR_24um*3.83e33*10**(-43.41)
 
 df_arm['region']['24um']='arm'
 df_arm['flux']['24um']=flux
@@ -424,7 +441,10 @@ ax.imshow(data_70um, origin='lower')
 arm_pix.plot(color='red')
 
 flux_70um=np.ma.sum(arm_masked)
-SFR_70um=sfr_70um(flux_70um)
+SFR_70um=sfr_70um(flux_70um)[0]
+
+LTIR_70um=sfr_70um(flux_70um)[1]
+df_arm['SFR_TIR']['70um']=LTIR_70um*3.83e33*10**(-43.41)
 
 df_arm['region']['70um']='arm'
 df_arm['flux']['70um']=flux_70um
@@ -444,3 +464,8 @@ df_arm['uncertainty']['24nd70']=error_combine
 
 # with open(logDir+'SFR.txt') as out:
 #     df.to_string(out)
+
+
+
+############################################################
+## test region

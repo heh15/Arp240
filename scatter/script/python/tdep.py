@@ -4,7 +4,7 @@ from spectral_cube import SpectralCube, Projection
 from radio_beam import Beam
 from astropy import units as u
 import time
-import numpy as np
+import numpy as npl
 import matplotlib.pyplot as plt
 import math
 from astropy.io import fits
@@ -71,6 +71,51 @@ def sfr_radio(flux, beamajor,beaminor,freq,d):
     SFR_tot=1e-27*(2.18*freq**-0.1+15.1*freq**-0.7)**(-1)*L
 
     return SFR_tot
+
+
+def reproj_binning(data, wcs, bin_num):
+    
+    map_in_shape=np.shape(data)
+    nx_in, ny_in=map_in_shape
+    nx_out=math.trunc(nx_in/bin_num);ny_out=math.trunc(ny_in/bin_num)
+    xs,ys=np.meshgrid(np.arange(nx_out), np.arange(ny_out))
+    wcs_out=wcs.deepcopy()
+    wcs_out.wcs.crpix =[math.trunc(nx_out/2), math.trunc(ny_out/2)]
+    wcs_out.wcs.cdelt=wcs.wcs.cdelt*bin_num
+    wcs_out.wcs.ctype = ['RA---SIN', 'DEC--SIN']
+    coords_out=pixel_to_skycoord(xs, ys, wcs_out)
+    coords_out_flat=coords_out.flatten()
+    pixel_labels_out = np.arange(xs.size)
+    data_binned=np.zeros((nx_out, ny_out)).flatten()
+    map_out_shape=(nx_out, ny_out)
+    
+    xs_in, ys_in = np.meshgrid(np.arange(nx_in), np.arange(ny_in))
+    coords_in = pixel_to_skycoord(xs_in, ys_in, wcs)
+    pixel_map_arr = np.full((nx_in, ny_in), np.nan).flatten()
+
+    i_in=0
+    npix_in = coords_in.flatten().size
+    dra, ddec = np.zeros(npix_in), np.zeros(npix_in)
+    i_out, d2d, d3d = match_coordinates_sky(coords_in.flatten(), coords_out_flat)
+    dra, ddec = (coords_in.flatten()).spherical_offsets_to(
+        coords_out_flat[i_out])
+    dra = dra.arcsec
+    ddec = ddec.arcsec
+
+    good = (-0.5001 <= dra) & (dra < 0.5001) & (-0.5001 <= ddec) & (ddec < 0.5001)
+    pixel_map_arr[good]=pixel_labels_out[i_out[good]]
+    data_labeled=np.stack((data.flatten(),pixel_map_arr), axis=1)
+    nan_index=np.where(np.isnan(data_labeled[:,1]))
+    data_labeled=np.delete(data_labeled, nan_index,axis=0)
+    data_labeled=data_labeled[np.argsort(data_labeled[:,1])]
+    data_group=np.split(data_labeled[:,0], np.cumsum(np.unique(data_labeled[:,1], return_counts=True)[1])[:-1])
+    for i in pixel_labels_out:
+        data_binned[i]=np.nanmean(data_group[i])
+
+    data_binned=data_binned.reshape(map_out_shape)
+        
+    return wcs_out, data_binned
+
 
 ############################################################
 # main program
@@ -333,11 +378,11 @@ SFR_southarm=1.94; SD_southarm= 336; t_southarm=SD_southarm/SFR_southarm*1000**2
 
 ## free-fall time
 tff2=math.sqrt(3)/(4*G)*(Quantities['NGC5258']['vd']*1000)/(Quantities['NGC5258']['SD']*2e30/pc**2)/(3600*24*365)
-tff2=math.sqrt(3)/(4*math.sqrt(G))*math.sqrt((10/0.7)**2*pc)/np.sqrt(Quantities['NGC5258']['SD']/0.1*2e30/pc**2)/(3600*24*365)
+# tff2=math.sqrt(3)/(4*math.sqrt(G))*math.sqrt((10/0.7)**2*pc)/np.sqrt(Quantities['NGC5258']['SD']/0.1*2e30/pc**2)/(3600*24*365)
 epsiff2=tff2/tau_binned
 
 tff1=math.sqrt(3)/(4*G)*(Quantities['NGC5257']['vd']*1000)/(Quantities['NGC5257']['SD']*2e30/pc**2)/(3600*24*365)
-tff1=math.sqrt(3)/(4*math.sqrt(G))*math.sqrt((10/0.7)**2*pc)/np.sqrt(Quantities['NGC5257']['SD']/0.1*2e30/pc**2)/(3600*24*365)
+# tff1=math.sqrt(3)/(4*math.sqrt(G))*math.sqrt((10/0.7)**2*pc)/np.sqrt(Quan tities['NGC5257']['SD']/0.1*2e30/pc**2)/(3600*24*365)
 epsiff1=tff1/Quantities['NGC5257']['tdep']
 
 mask=np.where(epsiff2=='nan')
@@ -422,32 +467,92 @@ plt.legend()
 ax.tick_params(labelsize=18)
 # plt.title('ULIRG conversion factor, filling factor=0.1')
 fig.tight_layout()
-plt.savefig(picDir+'SFE_perfreefall_binned_poster_GMC.png')
+plt.savefig(picDir+'SFE_perfreefall_binned_poster_Gal.png')
+
+############################################################
+# counting gas fraction component
+
+### input and bin the fraction image. 
+## NGC 5257
+fitsfile=mapDir+'NGC5257_gas_vol_fraction_regrid.fits'
+fraction_5257=fits_import(fitsfile)[1].data
+
+xpos=480;ypos=483 # center position
+low=[int(xpos-(subnum-1)/2*bin-bin/2), int(ypos-(subnum-1)/2*bin-bin/2)]
+high=[int(xpos+(subnum-1)/2*bin+bin/2),int(ypos+(subnum-1)/2*bin+bin/2)]
+fraction5257_sub=fraction_5257[low[1]:high[1],low[0]:high[0]]
+fraction5257_binned=np.nanmean(np.nanmean(fraction5257_sub.reshape(subnum,10,subnum,10),axis=-1),axis=1)
+
+## NGC 5258
+fitsfile=mapDir+'NGC5258_gas_vol_fraction_regrid.fits'
+fraction_5258=fits_import(fitsfile)[1]
+
+xpos=560;ypos=406 # center position
+right=15;left=subnum-right-1
+lower=15;upper=subnum-lower-1
+low=[int(xpos-left*bin-bin/2), int(ypos-lower*bin-bin/2)]
+high=[int(xpos+right*bin+bin/2),int(ypos+upper*bin+bin/2)]
+fraction5258_sub=fraction_5258[low[1]:high[1],low[0]:high[0]] # xpos and ypos different in spectral cube?
+fraction5258_binned=np.nanmean(np.nanmean(fraction5258_sub.reshape(subnum,10,subnum,10),axis=-1),axis=1)
 
 
-### Qtotsub_binned1, epsiff1; Qtotsub_binned2, epsiff2. correlation. 
+fitsfile=mapDir+'NGC5257_gas_vol_fraction.fits'
+fraction_5257=fits_import(fitsfile)[1].data
 
-Qwhole=np.hstack((Qtotsub_binned1.flatten(), Qtotsub_binned2.flatten()))
-epsiff_whole=np.hstack((epsiff1.flatten(), epsiff2.flatten()))
-
-bad=~np.logical_or(np.isnan(Qwhole), np.isnan(epsiff_whole))
-Qwhole_filter=np.compress(bad, Qwhole)
-epsiff_whole_filter=np.compress(bad, epsiff_whole)
-
-pearsonr(Qwhole_filter, epsiff_whole_filter)
+### Calculate the efficiency per freefall time
+epsiff2_star=epsiff2*np.sqrt(fraction5258_binned**2/0.5)
+epsiff1_star=epsiff1*np.sqrt(fraction5257_binned**2/0.5)
 
 fig=plt.figure()
+ax=plt.subplot()
+plt.xscale('log')
 plt.yscale('log')
-plt.scatter(Qwhole_filter, epsiff_whole_filter)
+plt.title('Including Stellar Component')
+plt.ylabel('$\epsilon_{ff}$', fontsize=20)
+plt.xlabel('$\Sigma_{mol} (M_{\odot}/pc^2)$', fontsize=20)
 
+eff=10**data_lit['log-eff']
+plt.scatter(molsd,eff,marker='.',label='Wilson et al. 2019')
+plt.scatter(Quantities['NGC5258']['SD'],epsiff2_star,marker='.',label='NGC5258',color=color2)
+plt.scatter(Quantities['NGC5257']['SD'],epsiff1_star,marker='.',label='NGC5257',color=color1)
+plt.legend()
+ax.tick_params(labelsize=18)
+# plt.title('ULIRG conversion factor, filling factor=0.1')
+fig.tight_layout()
+plt.savefig(picDir+'SFE_perfreefall_binned_poster_Gal_star.png')
+
+### test the fraction in star forming region
+## NGC 5257
+fraction5257_binned[np.isnan(epsiff1)]='nan'
 fig=plt.figure()
-plt.yscale('log')
-plt.ylabel('$\epsilon_{ff}$')
-plt.xlabel('Toomre factor Q')
-sc=plt.scatter(Qtotsub_binned1, epsiff1,c=betasub_binned1,  marker='.', label='NGC5257', cmap='brg_r')
-plt.scatter(Qtotsub_binned2, epsiff2,c=betasub_binned2,  marker='.', label='NGC5258', cmap='brg_r')
-# plt.legend()
-cbar=plt.colorbar(sc)
-cbar.set_label(r'$ \beta $', rotation='vertical')
-plt.savefig(picDir+'perfreefall_Q_beta.png')
+plt.imshow(fraction5257_binned)
+
+# ############################################################
+# # relationship with Toomre factor
+
+# ### Qtotsub_binned1, epsiff1; Qtotsub_binned2, epsiff2. correlation. 
+
+# Qwhole=np.hstack((Qtotsub_binned1.flatten(), Qtotsub_binned2.flatten()))
+# epsiff_whole=np.hstack((epsiff1.flatten(), epsiff2.flatten()))
+
+# bad=~np.logical_or(np.isnan(Qwhole), np.isnan(epsiff_whole))
+# Qwhole_filter=np.compress(bad, Qwhole)
+# epsiff_whole_filter=np.compress(bad, epsiff_whole)
+
+# pearsonr(Qwhole_filter, epsiff_whole_filter)
+
+# fig=plt.figure()
+# plt.yscale('log')
+# plt.scatter(Qwhole_filter, epsiff_whole_filter)
+
+# fig=plt.figure()
+# plt.yscale('log')
+# plt.ylabel('$\epsilon_{ff}$')
+# plt.xlabel('Toomre factor Q')
+# sc=plt.scatter(Qtotsub_binned1, epsiff1,c=betasub_binned1,  marker='.', label='NGC5257', cmap='brg_r')
+# plt.scatter(Qtotsub_binned2, epsiff2,c=betasub_binned2,  marker='.', label='NGC5258', cmap='brg_r')
+# # plt.legend()
+# cbar=plt.colorbar(sc)
+# cbar.set_label(r'$ \beta $', rotation='vertical')
+# plt.savefig(picDir+'perfreefall_Q_beta.png')
 

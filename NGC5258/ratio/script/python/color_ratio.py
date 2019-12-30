@@ -34,7 +34,7 @@ import shutil
 from matplotlib import ticker
 
 # ##plot setting
-labelsize=10
+labelsize=20
 nbins=5
 
 Dir='/1/home/heh15/workingspace/Arp240/NGC5258/ratio/'
@@ -127,6 +127,7 @@ lat = ax.coords[1]
 # lat.set_ticklabel_visible(False)
 cax=fig.add_axes()
 cbar=fig.colorbar(im,cax=cax)
+cbar.set_label('12CO/13CO 1-0 ratio', fontsize=20)
 cbar.ax.tick_params(labelsize=labelsize)
 tick_locator = ticker.MaxNLocator(nbins=nbins)
 cbar.locator = tick_locator
@@ -303,6 +304,7 @@ lat = ax.coords[1]
 # lat.set_ticklabel_visible(False)
 cax=fig.add_axes()
 cbar=fig.colorbar(im,cax=cax)
+cbar.set_label('12CO 2-1/1-0 ratio', fontsize=20)
 cbar.ax.tick_params(labelsize=labelsize)
 tick_locator = ticker.MaxNLocator(nbins=nbins)
 cbar.locator = tick_locator

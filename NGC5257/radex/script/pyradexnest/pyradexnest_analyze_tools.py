@@ -474,12 +474,13 @@ def plotmarginal(s,dists,add,mult,parameters,cube,plotinds,n_sec,n_dims,nicename
             axarr[gridinds].axvline(x=cube2[j]*mult2[j]+add2[j],color=colors2[j],linestyle='-',label='4D Max, Comparison')            
     
     # Ranges and labels
-    #mp.fix_ticks()
-    axarr[0][0].set_ylabel("Likelihood")
-    axarr[1][0].set_ylabel("Likelihood")
+    # mp.fix_ticks(labelsize=15)
+    axarr[0][0].set_ylabel("Likelihood", fontsize=20)
+    axarr[1][0].set_ylabel("Likelihood", fontsize=20)
     for i in range(4):
         gridinds=int(np.floor((i)/nx)),np.mod(i,nx)
-        axarr[gridinds].set_xlabel(nicenames[i])  # x-axis labels
+        axarr[gridinds].tick_params(labelsize=15)
+        axarr[gridinds].set_xlabel(nicenames[i], fontsize=20)  # x-axis labels
         axarr[gridinds].set_xlim(xr[i])           # x-axis ranges.
         if norm1: axarr[gridinds].set_ylim(0,1)   # y-axis ranges
     
@@ -492,7 +493,7 @@ def plotmarginal(s,dists,add,mult,parameters,cube,plotinds,n_sec,n_dims,nicename
             except:
                 axarr[0][0].annotate('%.2f' % mode['local log-evidence'],xy=(0.8,0.8-0.1*m),xycoords='axes fraction',color=[modecolors[m][0],modecolors[m][1],1])
                 #axarr[0][0].text(4,0.9-0.1*m,'%.2f' % mode[u'local log-evidence'],color=[modecolors[m][0],modecolors[m][1],1])
-
+    f.tight_layout()
     plt.draw()
     plt.savefig('fig_marginalized.png')
     print 'Saved fig_marginalized.png'

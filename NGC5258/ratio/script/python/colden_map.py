@@ -105,6 +105,13 @@ I12_binned=np.nanmean(np.nanmean(I12.reshape(subnum,5,subnum,5),axis=-1),axis=1)
 # I12_binned[I12_binned<5*1.6e-3*10*np.sqrt(50)]='nan'
 I12K=I12_binned/(0.0109*bmaj*bmin*(112/115.27)**2)
 
+## 12CO10 moment 8 map
+fitsimage=imageDir+'12CO10/NGC5258_12CO10_combine_contsub_uvrange_smooth_pbcor_mom8.fits'
+data_masked=fits_import(fitsimage)[1]
+
+I12_peak=np.copy(data_masked)
+I12peak_binned=np.nanmean(np.nanmean(I12_peak.reshape(subnum,5,subnum,5),axis=-1),axis=1)
+I12peak_K=I12peak_binned/(0.0109*bmaj*bmin*(112/115.27)**2)
 
 ## velocity dispersion
 fitsimage=imageDir+'12CO10/NGC5258_12CO10_combine_contsub_pbcor_smooth_mom2.fits'
@@ -116,6 +123,7 @@ linewidth_binned=np.nanmean(np.nanmean(linewidth.reshape(subnum,5,subnum,5),axis
 ### exctitation temperature
 T_ex=(I13K/linewidth_binned)/filling/(1-np.exp(-tau))
 # T_ex=20
+Tk=5.5/(np.log(1+5.5/(I12peak_K/filling+0.82)))
 
 ### column density
 N_13=3e14/(1-np.exp(-5.29/T_ex))*tau/(1-np.exp(-tau))*I13K
@@ -182,3 +190,6 @@ cbar.ax.tick_params(labelsize=20)
 cbar.set_label(r'$T_{ex} (K)$', fontsize=25)
 fig.tight_layout()
 plt.savefig(picDir+'NGC5258_Tex.png')
+
+fig=plt.figure()
+plt.imshow(Tk, origin='lower')

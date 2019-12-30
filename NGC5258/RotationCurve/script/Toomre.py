@@ -77,8 +77,8 @@ mapDir=Dir+'map/'
 
 ############################################################
 # basic settings
-incl=0.57
-PA=213.3
+incl=0.53
+PA=218
 ra=15*(13*u.degree+39*u.arcmin+57.741*u.arcsec)
 dec=49*u.arcmin+50.845*u.arcsec
 center=SkyCoord(dec=dec,ra=ra,frame='icrs')
@@ -120,7 +120,7 @@ def aperture_ring(radius_in,radius_out,wcs):
 def Apmask_convert(aperture,data_masked):
     data_cut=data_masked.data
     data_mask=data_masked.mask
-    apmask=aperture.to_mask(method='center')[0]
+    apmask=aperture.to_mask(method='center')
     shape=data_cut.shape
     mask=apmask.to_image(shape=((shape[0],shape[1])))
     mask_tmp=mask==0
@@ -315,7 +315,7 @@ SFR=fits.getdata(imageDir+'NGC5258_33GHz_regrid.fits')[0][0]
 SFR_binned=np.nanmean(np.nanmean(SFR.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
 wcs_sfr=WCS(fits.getheader(imageDir+'NGC5258_33GHz_regrid.fits'))
 wcs_sfr=wcs_sfr.celestial
-levels=[4*1.3e-5]
+levels=[2*1.0e-5]
 
 fig=plt.figure()
 sc=plt.scatter(R_binned,Qtot_binned,c=mom0_binned,marker='.', cmap='brg_r')
@@ -331,22 +331,27 @@ plt.savefig(picDir+'NGC5258_Toomre_scatter.png')
 # size=u.Quantity((54,42),u.arcsec)
 # cut=Cutout2D(data=Q_tot,position=position,size=size,wcs=wcs)
 # Qtot_cut=cut.data
-
+import matplotlib.colors as colors
 fig=plt.figure()
 
 position=center; size=u.Quantity((36,36),u.arcsec)
 Qtot_cut_wcs=cut_2d(Q_tot, position, size, wcs)[0]
 Qtot_cut=cut_2d(Q_tot, position, size, wcs)[1]
+Qtot_cutbin=np.nanmean(np.nanmean(Qtot_cut.reshape(int(360/bin),bin,int(360/bin),bin),axis=-1),axis=1)
 
 SFR_cut=cut_2d(SFR, position, size, wcs)[1]
+SFR_cutbin=np.nanmean(np.nanmean(SFR_cut.reshape(int(360/bin),bin,int(360/bin),bin),axis=-1),axis=1)
 
-ax=plt.subplot(projection=Qtot_cut_wcs)
-im=ax.imshow(Qtot_cut,origin='lower',vmax=np.nanmax(Qtot_binned))
+ax=plt.subplot()
+ax.set_xticks([])
+ax.set_yticks([])
+im=ax.imshow(Qtot_cutbin,origin='lower',vmax=3.0, norm=colors.PowerNorm(gamma=0.5))
 # rings[11].plot()
 # rings[13].plot()
 cbar=plt.colorbar(im)
 cbar.set_label('$ Q_{tot}$',fontsize=24)
-ax.contour(SFR_cut,levels=levels,colors=['red'])
+cbar.ax.tick_params(labelsize=20)
+ax.contour(SFR_cutbin,levels=levels,colors=['red'])
 plt.savefig(picDir+'NGC5258_Toomre_map.png')
 
 # fig=plt.figure()
@@ -354,6 +359,39 @@ plt.savefig(picDir+'NGC5258_Toomre_map.png')
 # im=plt.imshow(R,origin='lower')
 # cbar=plt.colorbar(im)
 
+## check velocity dispersion
+mom2_binned=np.nanmean(np.nanmean(mom2.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
+vdstar_binned=np.nanmean(np.nanmean(vdstar.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
+fig=plt.figure()
+plt.scatter(R_binned, vdstar_binned, marker='.', label='star')
+plt.scatter(R_binned, mom2_binned, marker='.', label='gas')
+plt.xlabel('Radius (kpc)', fontsize=20)
+plt.ylabel('velocity dispersion (km/s)', fontsize=20)
+plt.title('NGC 5258 velocity dispersion', fontsize=20)
+plt.legend(fontsize=20)
+plt.savefig(picDir+'NGC5258_dispersion_check.png')
+
+## check the Q and Q_tot
+Q_binned=np.nanmean(np.nanmean(Q.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
+fig=plt.figure()
+plt.scatter(R_binned, Q_binned, marker='.', label='gas')
+plt.scatter(R_binned, Qtot_binned, marker='.', label='2 component')
+plt.xlabel('Radius (kpc)', fontsize=20)
+plt.ylabel('Q', fontsize=20)
+plt.ylim(0,3)
+plt.legend()
+plt.title('NGC 5258 Q comparison')
+plt.savefig(picDir+'NGC5258_Q_check.png')
+
+## check the different methods to make Q
+# Q_binned=np.nanmean(np.nanmean(Q.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
+# sdstar_binned=np.nanmean(np.nanmean(sd_star.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
+# sds_binned=np.nanmean(np.nanmean(sds.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
+# Q_test=Q_binned*(1+sdstar_binned/sds_binned*mom2_binned/vdstar_binned)**(-1)
+
+# fig=plt.figure()
+# plt.scatter(R_binned, Q_test, marker='.')
+# plt.scatter(R_binned, Q_binned, marker='.')
 
 ### save the angular velocity, beta and Q ###
 

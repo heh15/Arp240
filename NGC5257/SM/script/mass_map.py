@@ -85,27 +85,26 @@ def mass_calc(flux_36,flux_45):
 ############################################################
 # main program
 
-Image=imageDir+'spitzer_36um_regrid.fits'
+Image=imageDir+'SPITZER_I1_39933184_0000_2_E11349850_maic.fits'
 wcs=fits_import(Image)[0]
 data_36=fits_import(Image)[1].data
 data_36=data_36*1e6
 
-Image=imageDir+'spitzer_45um_regrid.fits'
+Image=imageDir+'SPITZER_I2_39933184_0000_2_E11352627_maic.fits'
 data_45=fits_import(Image)[1].data
 data_45=data_45*1e6
 
 mass_map=mass_calc(data_36,data_45)
 mass_map=mass_map/sr_arcsec/arcsec_pc**2
 
-
-fitsimage=imageDir+'spitzer_45um_regrid.fits'
-hdr = fits.open(fitsimage)[0].header
-
 fig=plt.figure()
-plt.imshow(mass_map,origin='lower')
+plt.imshow(mass_map,origin='lower', vmax=2000, vmin=0)
 
-outfits=imageDir+'mass_map.fits'
-hdu=fits.PrimaryHDU(mass_map)
-hdu.header=hdr
-hdu.writeto(outfits, overwrite=True)
+# fitsimage=imageDir+'spitzer_45um_regrid.fits'
+# hdr = fits.open(fitsimage)[0].header
+
+# outfits=imageDir+'mass_map.fits'
+# hdu=fits.PrimaryHDU(mass_map)
+# hdu.header=hdr
+# hdu.writeto(outfits, overwrite=True)
 
