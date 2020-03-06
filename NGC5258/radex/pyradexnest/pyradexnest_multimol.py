@@ -27,7 +27,7 @@ if not os.path.exists("chains"): os.mkdir("chains")
 # User settings loaded into config.py already, otherwise use defaults
 # Because taulimit was added later, old config.py files might not have it.
 # Default will be used instead in measdata_pickle.
-taulimit=None
+taulimit=[0,100]
 try:
     from config import *
 except:

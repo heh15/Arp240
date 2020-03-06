@@ -1,9 +1,0 @@
-taskname           = "makemask"
-mode               =  "copy"
-inpimage           =  "/1/home/heh15/workingspace/Arp240/NGC5257/ratio/image/33GHz/NGC5257_33GHz_smooth_regrid.image/"
-inpmask            =  "/1/home/heh15/workingspace/Arp240/NGC5257/ratio/region/south_init.crtf"
-output             =  "/1/home/heh15/workingspace/Arp240/NGC5257/ratio/mask/south_SFR.mask"
-overwrite          =  False
-inpfreqs           =  []
-outfreqs           =  []
-#makemask(mode="copy",inpimage="/1/home/heh15/workingspace/Arp240/NGC5257/ratio/image/33GHz/NGC5257_33GHz_smooth_regrid.image/",inpmask="/1/home/heh15/workingspace/Arp240/NGC5257/ratio/region/south_init.crtf",output="/1/home/heh15/workingspace/Arp240/NGC5257/ratio/mask/south_SFR.mask",overwrite=False,inpfreqs=[],outfreqs=[])

@@ -42,3 +42,5 @@ def myprior(cube, ndim, nparams):
             cube[n_comp*4+i+n_mol-1]=cube[n_comp*4+i+n_mol-1]*3-4
 # 4) Normalize the plots so that the maximum of a marginalized plot is 1?
 norm1=True
+
+taulimit=[0, 100]

@@ -31,6 +31,7 @@ import numpy.ma as ma
 import math
 import shutil
 from scipy.optimize import curve_fit
+from regions import read_ds9
 
 ############################################################
 # directory
@@ -40,12 +41,15 @@ scriptDir=Dir+'script/'
 imageDir=Dir+'image/'
 pictureDir=Dir+'picture/'
 logDir=Dir+'log/'
+regionDir=Dir+'region/'
+
 
 ############################################################
 # basic settings
 D=99
 sr_arcsec=(180/math.pi*60**2)**2
 arcsec_pc=480
+
 
 ############################################################
 # functions
@@ -107,4 +111,6 @@ plt.imshow(mass_map,origin='lower', vmax=2000, vmin=0)
 # hdu=fits.PrimaryHDU(mass_map)
 # hdu.header=hdr
 # hdu.writeto(outfits, overwrite=True)
+
+#### calculate the gas fraction in different regions. 
 

@@ -97,7 +97,7 @@ def sfr_70um(f_her):
     return SFR_tot
 
 def Apmask_convert(aperture,data_cut):
-    apmask=aperture.to_mask(method='center')[0]
+    apmask=aperture.to_mask(method='center')
     shape=data_cut.shape
     mask=apmask.to_image(shape=((shape[0],shape[1])))
     ap_mask=mask==0
@@ -243,6 +243,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 fig=plt.figure()
 ax=plt.subplot('111',projection=Spitzer_wcs_cut)
+ax.tick_params(direction='in')
 ax.title.set_text('Spitzer 24um')
 im=ax.imshow(Spitzer_cut,origin='lower', cmap='gist_ncar_r')
 center_spi.plot(color='black')
@@ -254,6 +255,7 @@ plt.savefig(picDir+'spitzer_24um.png',bbox_inches='tight',pad_inches=0.2)
 fig=plt.figure()
 ax1=plt.subplot('111',projection=herschel_wcs_cut)
 ax1.title.set_text('Herschel 70um')
+ax1.tick_params(direction='in')
 im=ax1.imshow(herschel_cut,origin='lower', cmap='gist_ncar_r')
 center_her.plot(color='black')
 south_her.plot(color='black')
@@ -362,8 +364,7 @@ south_pix=south_sky.to_pixel(wcs=wcs_33smo)
 # ax.imshow(data_33smo,origin='lower')
 # south_pix.plot()
 # # plt.savefig(picDir+'33GHz_south.png')
-# south_33=south_pix
-
+south_33=south_pix
 
 
 beamarea=1.1331*5.76*5.46

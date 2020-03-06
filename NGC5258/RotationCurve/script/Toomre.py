@@ -86,8 +86,8 @@ freq=230.54
 D=99
 beammaj=1.004
 beammin=0.556
-ratio=0.77
-alpha=0.86
+ratio=0.85
+alpha=0.8
 rms=3e-3
 rms_mom0=3e-3*10*np.sqrt(50)
 
@@ -469,3 +469,13 @@ Omega_array=vrot_array*1000/R_std*(3600*24*365*10**6)
 Omegafile=mapDir+'NGC5258_Omega_map.fits'
 hdu=fits.PrimaryHDU(Omega_array.data)
 hdu.writeto(Omegafile, overwrite=True)
+
+############################################################
+# check
+
+# fig=plt.figure()
+# ax=plt.subplot(projection=wcs)
+# plt.imshow(Q_tot)
+# circle=SkyCircularAperture(positions=center, r=3*u.arcsec)
+# circle_pix=circle.to_pixel(wcs)
+# circle_pix.plot()
