@@ -71,8 +71,9 @@ testra = 204.97609228
 testdec = 0.84611111
 
 linelabel = '$^{12}$CO 1-0'
-vmax=15
 
+vmax = 12
+vmin = 0 
 
 ############################################################
 # main program
@@ -93,6 +94,11 @@ beamellipse = SkyEllipticalAperture(positions=beamposition,
                                     theta=pa)
 beamellipse_pix = beamellipse.to_pixel(wcs_cut)
 
+try:
+    gama
+except:
+    gama = 1.0
+
 fig = plt.figure()
 ax = plt.subplot('111', projection=wcs_cut)
 
@@ -101,19 +107,19 @@ props = dict(facecolor='white', alpha=0.5, edgecolor='None')
 plt.text(x, y, galaxy + ' ' + linelabel, fontsize=15, bbox=props)
 
 ax.tick_params(labelsize=8, direction='in')
+    
 im = plt.imshow(mom0_cut,
-########## private region
-#                 norm=colors.PowerNorm(gamma=0.7),
-#                 vmax=15,
-####################
-                vmin=0, 
+                norm=colors.PowerNorm(gamma=gama),
+		vmax=vmax,
+                vmin=vmin, 
                 origin='lower',
                 cmap='gist_ncar_r')
+plt.xlabel('J2000 Right Ascension')
+plt.ylabel('J2000 Declination')
 
 beamellipse_pix.plot(color='black')
 cbar = plt.colorbar(im)
 cbar.set_label('$Jy\ beam^{-1}\ km\ s^{-1} $', fontsize=15)
 plt.savefig(picDir + galaxy + '_' + line + '_pbcor_cube_mom0.png',
-            bbox_inches='tight',
-            pad_inches=0.2)
+            bbox_inches='tight')
 

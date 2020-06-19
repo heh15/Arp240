@@ -38,6 +38,7 @@ from astropy.wcs.utils import pixel_to_skycoord
 from astropy.coordinates import match_coordinates_sky
 import pandas as pd
 from regions import read_ds9
+from reproject import reproject_interp
 
 ############################################################
 # directory
@@ -66,8 +67,10 @@ galaxy='NGC5258'
 
 incl=0.53
 PA=218
-ra=15*(13*u.degree+39*u.arcmin+57.741*u.arcsec)
-dec=49*u.arcmin+50.845*u.arcsec
+# ra=15*(13*u.degree+39*u.arcmin+57.741*u.arcsec)
+# dec=49*u.arcmin+50.845*u.arcsec
+ra=15*(13*u.degree+39*u.arcmin+57.7*u.arcsec)
+dec=49*u.arcmin+53*u.arcsec
 center=SkyCoord(dec=dec,ra=ra,frame='icrs')
 freq=230.54
 D=99
@@ -213,82 +216,23 @@ data_masked=fits_import(fitsimage)[1]
 mom2=data_masked.data
 threshold=mom2<10
 mom2[threshold]='nan'
-# mom2_binned=np.nanmean(np.nanmean(mom2.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
 wcs_out,mom2_binned=reproj_binning(mom2, wcs, bin_num)
 
 ## import the surface density data
 fitsimage=imageDir+'NGC5258_12CO21_pbcor_cube_mom0.fits'
 data_masked=fits_import(fitsimage)[1]
 mom0=data_masked.data
-
 mom0_binned=reproj_binning(mom0, wcs, bin_num)[1]
-# mom0_binned=np.nanmean(np.nanmean(mom0.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
-# threshold=mom0<5*rms_mom0
-# mom0[threshold]='nan'
 
 sds=mom0_binned/(0.0109*beammaj*beammin*(freq/115.27)**2)*alpha/ratio
 
-### Calculate the azimuthal angle and radius of each pixel
-## create array of coordinates 
-size2=960;center_pix=[480,482]
-x=range(size2)
-y=range(size2)
-index1=np.meshgrid(x,y)[0]
-index2=np.meshgrid(x,y)[1]
-vectors=np.stack([index1,index2],axis=2)
-vectors[:,:,0]=vectors[:,:,0]-center_pix[0]
-vectors[:,:,1]=vectors[:,:,1]-center_pix[1]
-dists=np.sqrt(vectors[:,:,0]**2+vectors[:,:,1]**2)
-
-## vector with certain PA
-revangle=math.radians((360-PA-90))
-majaxis=[math.cos(math.radians(PA+90)),math.sin(math.radians(PA+90))]
-
-## transform the image to new coordinates.
-transform=[[math.cos(revangle),-math.sin(revangle)],[math.sin(revangle),math.cos(revangle)]]
-# transform=np.transpose(transform)
-vec_transform=np.matmul(vectors[:,:],transform)
-vec_transform[:,:,0]=vec_transform[:,:,0]/dists
-vec_transform[:,:,1]=vec_transform[:,:,1]/dists
-distinction=vec_transform[:,:,1]
-mask=distinction<0
-
-## the angle between pixel and major axis
-cosine=np.dot(vectors[:,:], majaxis)/dists
-angle=arccos(cosine)
-angle=angle*180/math.pi
-angle_binned=reproj_binning(angle, wcs, bin_num)[1]
-# angle_binned=np.nanmean(np.nanmean(angle.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
-# angle[mask]=2*math.pi-angle[mask]
-
-# mask_array=np.zeros((960,960),dtype=bool)
-# mask_array[0:40,0:40]=True
-# cosine_masked=np.ma.masked_where(~mask_array,cosine)
-
-# fig=plt.figure()
-# im=plt.imshow(cosine,origin='lower')
-# cbar=plt.colorbar(im)
-
-## create the radius array
-dists=dists*0.1*0.48
-R=np.sqrt(dists**2*(cosine**2+(1-cosine**2)/incl**2))
-R_binned=reproj_binning(R, wcs, bin_num)[1]
-# R_binned=np.nanmean(np.nanmean(R.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
-
-R_std=R*1000*3.1*10**16
-
 ### calculate the volume density of the disk
 ## stellar disk
-# rms_36=0.14e6;rms_45=0.13e6
-# lowcut=star_mass(rms_36,rms_45)/sr_arcsec/arcsec_pc**2
 
 fitsfile=mapDir+'mass_map_regrid.fits'
 sd_star=fits_import(fitsfile)[1]
 sdsstar_std=sd_star*2e30/(3.1e16)**2
 sdstar_binned=reproj_binning(sd_star, wcs, bin_num)[1]
-# sdstar_binned=np.nanmean(np.nanmean(sd_star.reshape(int(960/bin),bin,int(960/bin),bin),axis=-1),axis=1)
-# mask=sdstar_binned<lowcut
-# sdstar_binned[mask]='nan'
 
 length=scale_length
 Star_height=length/7.3*1000
@@ -296,10 +240,6 @@ star_den=sdstar_binned/Star_height/2
 mask=star_den<0.01
 star_den[mask]='nan'
 
-# fig=plt.figure()
-# # plt.imshow(sd_star, origin='lower')
-# # plt.contour(R, levels=[10,20])
-# plt.scatter(R_binned, star_den, marker='.')
 
 radius=8/0.48
 ring=aperture_ring(radius, (radius+1), wcs_out)
@@ -325,12 +265,6 @@ gas_den=gas_den_masked.data
 ring_gas_mask=Apmask_convert(ring, gas_den)
 rho_gas_compare=np.nanmean(ring_gas_mask)
 
-
-fig=plt.figure()
-ax=plt.subplot('111', projection=wcs_out)
-plt.imshow(gas_den, origin='lower')
-ring.plot(color='red')
-
 ## get the total fraction of the gas component in the system
 rho_tot=gas_den+star_den
 fraction=gas_den/(gas_den+star_den)
@@ -339,20 +273,31 @@ fraction_cut=cut_2d(fraction,center,size,wcs_out)[1]
 wcs_cut=cut_2d(fraction,center,size,wcs_out)[0]
 
 
+for key in regionfiles.keys():
+    regionobject=read_ds9(regionfiles[key])[0]
+    regionobjects[key]=regionobject
+
+fitsimage = imageDir + 'NGC5258_12CO21_combine_noise45_mom0.fits'
+wcs, contour_masked =  fits_import(fitsimage)
+contour = contour_masked.data
+contour_cut, footprint = reproject_interp((contour_masked, wcs), wcs_cut, shape_out=np.shape(fraction_cut))
+
+
 fig=plt.figure()
 ax=plt.subplot('111', projection=wcs_out)
 ax.tick_params(direction='in', labelsize=8)
-# ring.plot(color='red')
-plt.imshow(fraction_cut, origin='lower')
+ax.contour(contour_cut, colors='orange', linewidths=0.8, levels=[1.1, 2.2])
+for key in regionobjects.keys():
+    regionpix = regionobjects[key].to_pixel(wcs_cut)
+    regionpix.plot(color='red', linewidth=2.0)
+plt.imshow(fraction_cut, origin='lower', vmax = 0.5)
+plt.xlabel('J2000 Right Ascension')
+plt.ylabel('J2000 Declination')
 plt.colorbar()
 plt.title(r'$\rho_{gas}/(\rho_{gas}+\rho_{star})$')
 plt.savefig(picDir+galaxy+'_gas_vol_fraction.png')
 
 ### calculate the median fraction for each region. 
-for key in regionfiles.keys():
-    regionobject=read_ds9(regionfiles[key])[0]
-    regionobjects[key]=regionobject
-
 for key in regionobjects.keys():
     region_pix=regionobjects[key].to_pixel(wcs_cut)
     region_mask=Regmask_convert(region_pix, fraction_cut)
@@ -378,45 +323,3 @@ header.insert(0, 'SIMPLE')
 header['SIMPLE']=True
 hdu.header=header
 hdu.writeto(outfits, overwrite=True)
-
-# ### tolerance test
-#     map_in_shape=np.shape(data)
-#     nx_in, ny_in=map_in_shape
-#     nx_out=math.trunc(nx_in/bin_num);ny_out=math.trunc(ny_in/bin_num)
-#     xs,ys=np.meshgrid(np.arange(nx_out), np.arange(ny_out))
-#     wcs_out=wcs.deepcopy()
-#     wcs_out.wcs.crpix =[math.trunc(nx_out/2), math.trunc(ny_out/2)]
-#     wcs_out.wcs.cdelt=wcs.wcs.cdelt*bin_num
-#     wcs_out.wcs.ctype = ['RA---SIN', 'DEC--SIN']
-#     coords_out=pixel_to_skycoord(xs, ys, wcs_out)
-#     coords_out_flat=coords_out.flatten()
-#     pixel_labels_out = np.arange(xs.size)
-#     data_binned=np.zeros((nx_out, ny_out)).flatten()
-#     map_out_shape=(nx_out, ny_out)
-    
-#     xs_in, ys_in = np.meshgrid(np.arange(nx_in), np.arange(ny_in))
-#     coords_in = pixel_to_skycoord(xs_in, ys_in, wcs)
-#     pixel_map_arr_test1 = np.full((nx_in, ny_in), np.nan).flatten()
-#     pixel_map_arr_test2 = np.full((nx_in, ny_in), np.nan).flatten()
-
-#     i_in=0
-#     npix_in = coords_in.flatten().size
-#     dra, ddec = np.zeros(npix_in), np.zeros(npix_in)
-#     i_out, d2d, d3d = match_coordinates_sky(coords_in.flatten(), coords_out_flat)
-#     dra, ddec = (coords_in.flatten()).spherical_offsets_to(
-#         coords_out_flat[i_out])
-#     dra = dra.arcsec
-#     ddec = ddec.arcsec
-
-#     good1 = (-0.5001 <= dra) & (dra < 0.5001) & (-0.5001 <= ddec) & (ddec < 0.5001)
-#     good2= (-0.5 <= dra) & (dra < 0.5) & (-0.5 <= ddec) & (ddec < 0.5)
-#     pixel_map_arr_test1[good1]=pixel_labels_out[i_out[good1]]
-#     pixel_map_arr_test2[good2]=pixel_labels_out[i_out[good2]]
-
-#     count_nan1=np.where(np.isnan(pixel_map_arr_test1))[0].shape
-#     count_nan2=np.where(np.isnan(pixel_map_arr_test2))[0].shape
-#     count_all=np.shape(pixel_map_arr_test1)[0]
-
-#     example1=np.where(np.logical_and(np.isnan(pixel_map_arr_test1), ~np.isnan(data.flatten())))
-#     example2=np.where(np.logical_and(np.isnan(pixel_map_arr_test2), ~np.isnan(data.flatten())))
-#     print(dra[331650], ddec[331650])
